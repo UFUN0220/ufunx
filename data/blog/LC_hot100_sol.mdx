@@ -30,6 +30,8 @@ vector<int> twoSum(vector<int>& nums, int target) {
     }
 ```
 
+遍历数组的同时，利用哈希表存储已访问元素的下标，从而在 O(1)时间内找到与当前元素相加等于 `target` 的目标差值。
+
 ## [2. 两数相加](https://leetcode.cn/problems/add-two-numbers/)
 
 > 给你两个 **非空** 的链表，表示两个非负的整数。它们每位数字都是按照 **逆序** 的方式存储的，并且每个节点只能存储 **一位** 数字。
@@ -55,6 +57,8 @@ ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
     }
 ```
 
+**模拟竖式加法**，同步遍历两个链表，利用**虚拟头节点 (Dummy Head)** 简化结果链表的构建，并将 `carry` 加入循环条件（`while(l1 || l2 || carry)`）以优雅处理链表长度不等及最高位进位的情况。
+
 ## [3. 无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/)
 
 > 给定一个字符串 `s` ，请你找出其中不含有重复字符的 **最长** 子串 的长度。
@@ -76,6 +80,8 @@ int lengthOfLongestSubstring(string s) {
     }
 ```
 
+使用**滑动窗口**结合**哈希表**记录字符频率，右指针向右扩张，一旦发现重复字符（词频 > 1），左指针收缩直至重复消除，以此动态维护一个无重复子串并实时更新最大长度。
+
 ## [5. 最长回文子串](https://leetcode.cn/problems/longest-palindromic-substring/)
 
 > 给你一个字符串 `s`，找到 `s` 中最长的 回文 子串。
@@ -94,6 +100,8 @@ string longestPalindrome(string s) {
         return ans;
     }
 ```
+
+采用**中心扩散法**，遍历字符串的每个位置，分别以“单字符”（处理奇数长度）和“当前与下一字符之间”（处理偶数长度）为中心向两边扩展，实时更新找到的最长回文子串。
 
 ## [11. 盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/)
 
@@ -118,6 +126,8 @@ int maxArea(vector<int>& height) {
         return ans;
     }
 ```
+
+利用**双指针**从数组两端向中间收缩，每次计算面积并更新最大值，同时依据**贪心策略**总是移动**高度较短**的那一侧指针（因为受限于短板，移动长板面积只会因宽度减小而变小），直到指针相遇。
 
 ## [15. 三数之和](https://leetcode.cn/problems/3sum/)
 
@@ -148,6 +158,8 @@ vector<vector<int>> threeSum(vector<int>& nums) {
         return res;
     }
 ```
+
+先将数组**排序**，遍历固定第一个数后，利用**双指针**在剩余区间寻找另外两数使和为零，同时利用排序特性跳过相邻重复元素以**去重**。
 
 ## [17. 电话号码的字母组合](https://leetcode.cn/problems/letter-combinations-of-a-phone-number/)
 
@@ -186,7 +198,7 @@ public:
 };
 ```
 
-思路
+利用**回溯算法（\*\***DFS\***\*）构建一棵多叉树，树的每一层对应输入的一个数字，通过遍历该数字映射的所有字母分支，并在\*\***递归\***\*返回时撤销选择**（Pop Back），从而穷举所有可能的字符组合。
 
 ## [19. 删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
 
@@ -211,7 +223,7 @@ ListNode* removeNthFromEnd(ListNode* head, int n) {
     }
 ```
 
-思路
+利用**虚拟头节点**处理删除头节点等边界情况，使用**双指针**保持 $n$ 的**固定间距**（快指针先走 $n$ 步），之后同步移动直至快指针到达末尾，从而让慢指针精准定位到待删除节点的前驱进行操作。
 
 ## [20. 有效的括号](https://leetcode.cn/problems/valid-parentheses/)
 
@@ -240,7 +252,7 @@ bool isValid(string s) {
     }
 ```
 
-思路
+利用**栈 (Stack)** 处理嵌套结构，遍历时遇到左括号便将**对应的右括号**压入栈中，遇到右括号时检查是否与栈顶一致并弹出，最终通过栈是否为空判断所有括号是否正确闭合。
 
 ## [21. 合并两个有序链表](https://leetcode.cn/problems/merge-two-sorted-lists/)
 
@@ -265,7 +277,7 @@ ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
     }
 ```
 
-思路
+利用**虚拟头节点 (Dummy Head)** 简化结果链表的构建，通过循环比较两个有序链表的当前节点值，将**较小者**依次拼接到新链表末尾，并在循环结束后直接挂接剩余的非空链表段。
 
 ## [22. 括号生成](https://leetcode.cn/problems/generate-parentheses/)
 
@@ -296,7 +308,7 @@ public:
 };
 ```
 
-思路
+利用**回溯算法**（DFS）逐位构建字符串，维护剩余左右括号的计数，并通过“剩余右括号数不能少于剩余左括号数”这一约束条件提前**剪枝**非法路径，从而生成所有有效的括号组合。
 
 ## [31. 下一个排列](https://leetcode.cn/problems/next-permutation/)
 
@@ -328,7 +340,7 @@ void nextPermutation(vector<int>& nums) {
     }
 ```
 
-思路
+从后向前寻找第一个**相邻升序对**以锁定需变动的“小数”，将其与后缀中**略大于它**的数交换，最后**反转后缀**使其变为升序（最小化），从而构造出紧邻的下一个字典序排列。
 
 ## [32. 最长有效括号](https://leetcode.cn/problems/longest-valid-parentheses/)
 
@@ -353,7 +365,7 @@ int longestValidParentheses(string s) {
     }
 ```
 
-思路
+利用**栈**存储**下标**并预置 `-1` 作为参照底座，遇到右括号弹出栈顶后，若栈非空则通过**下标差**更新最大长度，若栈空则将当前位置作为新的**分割点**重新入栈。
 
 ## [33. 搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/)
 
@@ -383,7 +395,7 @@ int search(vector<int>& nums, int target) {
     }
 ```
 
-思路
+利用**二分查找**，在每轮迭代中判断哪一半区间是**有序**的（单调递增），通过检查 `target` 是否落在这个有序区间内来决定向左还是向右收缩，从而在 $O(\log N)$ 时间内定位目标值。
 
 ## [34. 在排序数组中查找元素的第一个和最后一个位置](https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/)
 
@@ -433,7 +445,7 @@ public:
 };
 ```
 
-思路
+先对数组**排序**以便提前终止循环（**剪枝**），利用**回溯算法**搜索组合，通过在递归时传入**当前下标** **`i`**（而非 `i+1`）来实现元素的**无限重复选取**。
 
 ## [42. 接雨水](https://leetcode.cn/problems/trapping-rain-water/)
 
@@ -458,7 +470,7 @@ int trap(vector<int>& height) {
     }
 ```
 
-思路
+利用**双指针**从两端向中间收缩，实时维护左（`lmax`）右（`rmax`）两侧的最高挡板，依据**“短板效应”**（较矮的一侧决定水位）直接计算当前位置的积水量并移动较矮侧的指针。
 
 ## [46. 全排列](https://leetcode.cn/problems/permutations/)
 
@@ -491,7 +503,7 @@ public:
 };
 ```
 
-思路
+利用**回溯算法**按位填充，借助 **`used`** **数组**标记当前路径中已使用的元素以避免重复选择，通过“做出选择-递归进入-撤销选择”的流程穷举所有排列。
 
 ## [48. 旋转图像](https://leetcode.cn/problems/rotate-image/)
 
@@ -515,7 +527,7 @@ void rotate(vector<vector<int>>& matrix) {
     }
 ```
 
-思路
+将顺时针旋转 90 度操作分解为两步线性代数变换：先沿**主对角线转置**（行列互换），再对每一行进行**左右翻转**，从而在 $O(1)$ 额外空间下完成原地旋转。
 
 ## [49. 字母异位词分组](https://leetcode.cn/problems/group-anagrams/)
 
@@ -537,7 +549,7 @@ vector<vector<string>> groupAnagrams(vector<string>& strs) {
     }
 ```
 
-思路
+遍历字符串数组，将每个字符串**排序**后的结果作为**哈希表**的唯一键（归一化），从而将所有同源的变位词映射到同一个列表中进行分组。
 
 ## [53. 最大子数组和](https://leetcode.cn/problems/maximum-subarray/)
 
@@ -556,7 +568,7 @@ int maxSubArray(vector<int>& nums) {
     }
 ```
 
-思路
+运用 **Kadane 算法**（也是动态规划的一种空间优化），遍历数组时计算以当前元素结尾的最大和，通过比较“当前元素”与“前缀和 + 当前元素”的大小来决定是**延续**之前的子数组还是**重新开始**，并实时更新全局最大值。
 
 ## [55. 跳跃游戏](https://leetcode.cn/problems/jump-game/)
 
@@ -577,7 +589,7 @@ bool canJump(vector<int>& nums) {
     }
 ```
 
-思路
+利用**贪心算法**维护一个“当前能到达的**最远位置**”，遍历数组时若当前下标在可达范围内，则利用当前跳跃力更新最远边界，一旦该边界覆盖数组末尾即判定成功。
 
 ## [56. 合并区间](https://leetcode.cn/problems/merge-intervals/)
 
@@ -602,7 +614,7 @@ vector<vector<int>> merge(vector<vector<int>>& intervals) {
     }
 ```
 
-思路
+首先按**起始位置排序**，随后遍历数组，维护一个动态的合并区间，若当前区间与该区间**重叠**则通过取最大终点值**扩展右边界**，否则说明断开，将旧区间存入结果并开启新区间。
 
 ## [62. 不同路径](https://leetcode.cn/problems/unique-paths/)
 
@@ -641,7 +653,7 @@ int minPathSum(vector<vector<int>>& grid) {
     }
 ```
 
-思路
+利用**二维动态规划**，先累加初始化首行与首列，随后对于网格内部的每个位置，选取**上方或左方**已计算路径和的**较小值**加上当前元素值，从而逐步推导至终点的最小路径总和。
 
 ## [70. 爬楼梯](https://leetcode.cn/problems/climbing-stairs/)
 
@@ -681,7 +693,7 @@ int minDistance(string word1, string word2) {
     }
 ```
 
-思路
+利用**二维动态规划**，定义 `dp[i][j]` 为两个字符串前缀间的最小编辑距离，根据当前字符是否相等，从**插入、删除、替换**（分别对应左、上、左上三个邻格状态）三种操作中择优递推，从而求得将 `word1` 转换为 `word2` 的最少操作数。
 
 ## [75. 颜色分类](https://leetcode.cn/problems/sort-colors/)
 
@@ -702,7 +714,7 @@ void sortColors(vector<int>& nums) {
     }
 ```
 
-思路
+利用**三指针**（荷兰国旗问题解法）动态维护三个区域，遍历时将 `0` 交换至左侧 `p0` 边界，`2` 交换至右侧 `p2` 边界（注意 `cur` 不进位以复查交换来的新数），`1` 则留在中间，从而实现一次遍历的原地排序。
 
 ## [78. 子集](https://leetcode.cn/problems/subsets/)
 
@@ -731,7 +743,7 @@ public:
 };
 ```
 
-思路
+利用**回溯算法**（DFS）遍历决策树，在进入递归函数的每一个节点时都直接记录当前路径（即收集**所有树节点**而非仅叶子节点），并通过传入 `start` 索引控制遍历顺序以避免生成重复子集。
 
 ## [79. 单词搜索](https://leetcode.cn/problems/word-search/)
 
@@ -768,7 +780,7 @@ public:
 };
 ```
 
-思路
+以网格中每个位置为起点发起**深度优先搜索** **(\*\***DFS\***\*)**，递归地向四周邻居试探匹配字符，并通过临时修改当前格内容（如改为 `.`）来**标记已访问**以防止路径回头，最终在递归返回时**回溯**（还原字符）。
 
 ## [84. 柱状图中最大的矩形](https://leetcode.cn/problems/largest-rectangle-in-histogram/)
 
@@ -830,7 +842,7 @@ public:
 };
 ```
 
-思路
+采用**递归**（DFS）方式，严格遵循“左子树 $\to$ 根节点 $\to$ 右子树”的访问顺序，优先深入左侧直至叶子节点，记录数值后再转向右侧，从而得到中序遍历序列。
 
 ## [96. 不同的二叉搜索树](https://leetcode.cn/problems/unique-binary-search-trees/)
 
@@ -850,7 +862,7 @@ int numTrees(int n) {
     }
 ```
 
-思路
+利用**动态规划**（卡特兰数），遍历 $1$ 到 $n$ 的每个数字作为**根节点**，通过将左子树（节点数 $j-1$）与右子树（节点数 $i-j$）的结构数量**相乘并累加**，递推得出 $n$ 个节点构成的唯一二叉搜索树总数。
 
 ## [98. 验证二叉搜索树](https://leetcode.cn/problems/validate-binary-search-tree/)
 
@@ -877,7 +889,7 @@ public:
 };
 ```
 
-思路
+利用**中序遍历**（DFS）将二叉搜索树转化为**有序序列**的特性，通过维护一个全局指针 `pre` 记录**前一个访问节点**，在递归过程中实时校验当前节点值是否**严格大于**前驱节点值，一旦违背递增规律即判定非法。
 
 ## [101. 对称二叉树](https://leetcode.cn/problems/symmetric-tree/)
 
@@ -899,7 +911,7 @@ public:
 };
 ```
 
-思路
+利用**递归**同时遍历左右子树，通过同步比较**对称位置**的节点——即“左子树的左孩子 vs 右子树的右孩子”（外侧）与“左子树的右孩子 vs 右子树的左孩子”（内侧）——是否相等，从而判断二叉树是否呈**镜像对称**。
 
 ## [102. 二叉树的层序遍历](https://leetcode.cn/problems/binary-tree-level-order-traversal/)
 
@@ -926,7 +938,7 @@ vector<vector<int>> levelOrder(TreeNode* root) {
     }
 ```
 
-思路
+利用**队列**实现**广度优先搜索 (\*\***BFS\***\*)**，在每轮迭代开始时记录当前队列长度以锁定**当前层级**的节点数量，从而批量处理该层所有节点并将下一层的子节点加入队列尾部。
 
 ## [104. 二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree/)
 
@@ -941,7 +953,7 @@ int maxDepth(TreeNode* root) {
     }
 ```
 
-思路
+采用**递归**（DFS）方式，通过**自底向上**的逻辑，分别计算左子树和右子树的深度，取两者的**最大值**加 1（当前节点贡献的高度），从而逐层汇总得到整棵树的最大深度。
 
 ## [105. 从前序与中序遍历序列构造二叉树](https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
 
@@ -976,7 +988,7 @@ void flatten(TreeNode* root) {
     }
 ```
 
-思路
+利用**寻找前驱节点**（左子树的最右节点）的技巧，将当前节点的**原本右子树**挂接到左子树的最右端，随后将**左子树**整体移至右侧并置空左指针，从而在 $O(1)$ 空间内**原地**将二叉树按前序遍历顺序“拉直”为单链表。
 
 ## [121. 买卖股票的最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/)
 
@@ -1000,7 +1012,7 @@ int maxProfit(vector<int>& prices) {
     }
 ```
 
-思路
+利用**动态规划**构建状态机，分别维护“持有股票”（`dp[i][0]`，本质上是在记录历史最低买入成本的负值）和“不持有股票”（`dp[i][1]`，即当前最大利润）两个状态，通过在每一天决策是**延续旧状态**还是**进行买卖操作**，求解**单次交易**的最大收益。
 
 ## [124. 二叉树中的最大路径和](https://leetcode.cn/problems/binary-tree-maximum-path-sum/)
 
@@ -1029,7 +1041,7 @@ public:
 };
 ```
 
-思路
+利用**后序遍历**（递归）自底向上计算每个节点的**最大单边贡献值**，若子树贡献为负则**舍弃**（视为0），在递归过程中利用“左子树+根+右子树”的组合（即视当前节点为路径拐点）尝试更新全局最大路径和，并向父节点返回“根节点+较大的一边”以保持路径的**单向延伸性**。
 
 ## [128. 最长连续序列](https://leetcode.cn/problems/longest-consecutive-sequence/)
 
@@ -1055,7 +1067,7 @@ int longestConsecutive(vector<int>& nums) {
     }
 ```
 
-思路
+利用 **哈希集合** **(\*\***HashSet\***\*)** 去重并实现 $O(1)$ 查找，遍历时仅对**没有前驱**（即 `n-1` 不存在）的数字发起连续序列长度统计，跳过非起点元素，从而确保每个数字仅被处理一次，实现 $O(N)$ 时间复杂度。
 
 ## [136. 只出现一次的数字](https://leetcode.cn/problems/single-number/)
 
@@ -1095,7 +1107,7 @@ bool wordBreak(string s, vector<string>& wordDict) {
     }
 ```
 
-思路
+利用**动态规划**，定义 `dp[i]` 表示字符串的前 `i` 个字符能否被成功拆分，通过枚举**分割点** **`j`**，检查“前缀 `dp[j]` 是否合法”以及“剩余后缀子串是否在字典中”，一旦满足条件即标记当前长度为真并跳出内层循环。
 
 ## [141. 环形链表](https://leetcode.cn/problems/linked-list-cycle/)
 
@@ -1170,7 +1182,7 @@ public:
 };
 ```
 
-思路
+结合 **哈希表** (HashMap) 和 **双向链表** (Doubly Linked List)，利用哈希表存储 `key` 到 `{value, list_iterator}` 的映射以实现 $O(1)$ 的快速查找，同时利用链表维护**操作的时间顺序**。每次访问或更新数据时，将对应的 Key 移动到链表**尾部**（表示最近使用），而在容量不足时，直接移除链表**头部**（表示最近最少使用）的元素。
 
 ## [148. 排序链表](https://leetcode.cn/problems/sort-list/)
 
@@ -1213,7 +1225,7 @@ public:
 };
 ```
 
-思路
+利用**归并排序**（Merge Sort）的分治策略，首先通过**快慢指针**技巧定位链表中点并将其截断为两个子链表，随后递归地对两侧进行排序，最后通过标准的**合并两个有序链表**操作（使用 Dummy 节点）将结果重组。
 
 ## [152. 乘积最大子数组](https://leetcode.cn/problems/maximum-product-subarray/)
 
@@ -1236,7 +1248,7 @@ int maxProduct(vector<int>& nums) {
     }
 ```
 
-思路
+利用**动态规划**，同时维护以当前元素结尾的**最大积**和**最小积**。核心逻辑在于：当遇到**负数**时，交换最大值与最小值（因为负负得正，原本的最小值乘以负数可能跃升为最大值），随后抉择是延续前缀积还是重新开始，从而捕捉到最大的子数组乘积。
 
 ## [155. 最小栈](https://leetcode.cn/problems/min-stack/)
 
@@ -1274,7 +1286,7 @@ public:
 };
 ```
 
-思路
+采用 **“栈中存对” (Stack of Pairs)** 的策略，将当前数值与**该时刻的全局最小值**绑定在一起存入栈中。每次入栈时，实时计算并记录“当前值与栈顶最小值”的较小者；出栈时，随元素移除，最小值状态也**自动回溯**至上一层，从而确保在 $O(1)$ 时间内获取最小值。
 
 ## [160. 相交链表](https://leetcode.cn/problems/intersection-of-two-linked-lists/)
 
@@ -1297,7 +1309,7 @@ ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
     }
 ```
 
-思路
+利用**双指针**技巧，让两个指针分别遍历完自己的链表后**跳转到对方链表**的头部。通过这种方式，两个指针走过的总路程均为 $L_A + L_B$，从而巧妙地**消除非公共部分的长度差异**，最终在相交节点（或终点 `null`）相遇。
 
 ## [169. 多数元素](https://leetcode.cn/problems/majority-element/)
 
@@ -1330,7 +1342,7 @@ int rob(vector<int>& nums) {
     }
 ```
 
-思路
+利用**动态规划**解决“相邻不可兼得”的约束问题。对于每一间房屋，状态转移的核心在于**抉择**：要么**偷窃当前房屋**（此时只能加上 `i-2` 位置的累积金额），要么**跳过当前房屋**（直接继承 `i-1` 位置的累积金额），通过始终取两者的**最大值**来递推全局最优解。
 
 ## [200. 岛屿数量](https://leetcode.cn/problems/number-of-islands/)
 
@@ -1365,7 +1377,7 @@ ListNode* reverseList(ListNode* head) {
     }
 ```
 
-思路
+采用**迭代法**（双指针），在遍历过程中维护 `pre`（前驱）、`cur`（当前）和 `nxt`（后继）三个指针。核心逻辑在于先暂存后继节点以防断链，随后将当前节点的 `next` 指针**反向指回** `pre`，最后整体向后移动指针，直到遍历结束。
 
 ## [207. 课程表](https://leetcode.cn/problems/course-schedule/)
 
@@ -1435,7 +1447,7 @@ int maximalSquare(vector<vector<char>>& matrix) {
     }
 ```
 
-思路
+利用**二维动态规划**，定义 `dp[i][j]` 为以当前坐标为**右下角**的最大正方形边长。对于每个为 `'1'` 的位置，受限于其**左方、上方及左上方**的邻居状态（类似“木桶效应”），取这三者的**最小值**加 1 来确定当前最大边长，最终返回边长的平方作为面积。
 
 ## [226. 翻转二叉树](https://leetcode.cn/problems/invert-binary-tree/)
 
@@ -1451,7 +1463,7 @@ TreeNode* invertTree(TreeNode* root) {
     }
 ```
 
-思路
+利用**递归**（DFS）遍历二叉树，对于每一个访问到的节点，直接**交换其左右子树**指针，随后深入递归处理子节点，从而“自顶向下”地将整棵树翻转为**镜像**结构。
 
 ## [234. 回文链表](https://leetcode.cn/problems/palindrome-linked-list/)
 
@@ -1500,7 +1512,7 @@ public:
 };
 ```
 
-思路
+结合 **快慢指针** 和 **链表\*\***反转** 技巧，首先利用快慢指针定位链表的**中点**，随后将**后半部分\*\*链表进行原地反转，最后通过双指针同步比较前半段与反转后的后半段是否一致，从而在 $O(N)$ 时间且 $O(1)$ 空间内完成回文校验。
 
 ## [236. 二叉树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/)
 
@@ -1521,7 +1533,7 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
     }
 ```
 
-思路
+利用**递归**（DFS）进行后序遍历。当遇到节点 `p` 或 `q` 时直接返回该节点；若在当前节点的**左、右子树**中分别找到了这两个节点（即 `left` 和 `right` 均非空），则说明当前节点即为**最近公共祖先**；若仅有一侧找到了节点，则向上返回该侧的结果（代表目标节点或已找到的公共祖先）。
 
 ## [238. 除了自身以外数组的乘积](https://leetcode.cn/problems/product-of-array-except-self/)
 
@@ -1554,7 +1566,7 @@ vector<int> productExceptSelf(vector<int>& nums) {
     }
 ```
 
-思路
+利用**前缀积**与**后缀积**的思想，将问题分解为“当前位置左侧所有数的乘积”乘以“当前位置右侧所有数的乘积”。通过两次遍历分别预计算这两个辅助数组，最后将对应位置的左积与右积相乘，从而在**不使用除法**的情况下得到结果。
 
 ## [239. 滑动窗口最大值](https://leetcode.cn/problems/sliding-window-maximum/)
 
@@ -1589,7 +1601,7 @@ bool searchMatrix(vector<vector<int>>& matrix, int target) {
     }
 ```
 
-思路
+利用**行列递增**的特性，将查找过程抽象为在矩阵中“行走”。从矩阵的**右上角**出发（该位置是当前行的最大值，同时是当前列的最小值）：若当前值大于目标，则向**左**移动（排除整列）；若当前值小于目标，则向**下**移动（排除整行）。通过这种方式逐步缩小查找范围，时间复杂度为 $O(M+N)$。
 
 ## [279. 完全平方数](https://leetcode.cn/problems/perfect-squares/)
 
@@ -1610,7 +1622,7 @@ int numSquares(int n) {
     }
 ```
 
-思路
+利用**动态规划**（类比完全背包问题），定义 `dp[i]` 为和为 $i$ 的最少完全平方数个数。通过遍历所有小于等于当前数 $i$ 的平方数 $j^2$，尝试将问题转化为求解“剩余数值 $i-j^2$ 的最优解加 1”，并在所有可能的平方数选择中取**最小值**。
 
 ## [283. 移动零](https://leetcode.cn/problems/move-zeroes/)
 
@@ -1631,7 +1643,7 @@ void moveZeroes(vector<int>& nums) {
     }
 ```
 
-思路
+利用**双指针**（快慢指针）技巧。使用快指针（`right`/`i`）遍历数组寻找**非零元素**，同时维护一个慢指针（`left`）指向**下一个存放非零值的位置**。每当遇到非零数时，将其与慢指针处的元素**交换**，并将慢指针向右移动，从而在保持相对顺序的前提下，将所有非零元素移至数组前端，零元素自然归并至末尾。
 
 ## [287. 寻找重复数](https://leetcode.cn/problems/find-the-duplicate-number/)
 
@@ -1682,7 +1694,7 @@ int lengthOfLIS(vector<int>& nums) {
     }
 ```
 
-思路
+利用**动态规划**，定义 `dp[i]` 为以第 $i$ 个元素**结尾**的最长上升子序列长度。通过双重循环遍历，对于每个元素 `nums[i]`，回头检查所有之前的元素 `nums[j]`，若满足**递增关系**（`nums[i] > nums[j]`），则尝试将当前元素拼接到 `j` 的序列后以更新最大长度，最终取所有位置的峰值。
 
 ## [301. 删除无效的括号](https://leetcode.cn/problems/remove-invalid-parentheses/)
 
@@ -1725,7 +1737,7 @@ int maxProfit(vector<int>& prices) {
     }
 ```
 
-思路
+利用**动态规划**构建多状态机，将每天的交易状态细分为四种：**持有**、**保持卖出**（非冷冻期，随时可买）、**今天卖出**和**冷冻期**。核心逻辑在于处理**冷冻期约束**：只有在“保持卖出”或“冷冻期”结束后才能再次买入（转移至持有态），而“今天卖出”后的次日强制进入“冷冻期”，通过在这些状态间进行最优转移，求解多次交易的最大累计利润。
 
 ## [312. 戳气球](https://leetcode.cn/problems/burst-balloons/)
 
@@ -1762,7 +1774,7 @@ int coinChange(vector<int>& coins, int amount) {
     }
 ```
 
-思路
+利用**动态规划**（完全背包问题的变体），定义 `dp[j]` 为凑成金额 `j` 所需的**最少\*\***硬币\***\*数量**。通过外层遍历硬币类型、内层**正向遍历**金额（从小到大，意味着允许**重复使用**同一面额），在每次迭代中尝试加入当前硬币，并取“当前已知最优解”与“加入新硬币后的解”的**最小值**来更新状态。
 
 ## [337. 打家劫舍 III](https://leetcode.cn/problems/house-robber-iii/)
 
@@ -1792,7 +1804,12 @@ public:
 };
 ```
 
-思路
+利用**树形动态规划**（Tree DP）结合**后序遍历**。对于每个节点，递归地计算并返回两个状态值：
+
+1. **偷当前节点**（`val1`）：此时必须**跳过**左右子节点，收益为“当前节点值 + 左子不偷 + 右子不偷”。
+2. **不偷当前节点**（`val2`）：此时左右子节点**可偷可不偷**，取各自状态下的最大值之和。
+
+通过自底向上的推导，最终在根节点处比较这两种选择的最大值。
 
 ## [338. 比特位计数](https://leetcode.cn/problems/counting-bits/)
 
@@ -1808,7 +1825,9 @@ vector<int> countBits(int n) {
     }
 ```
 
-思路
+利用 **动态规划** 结合 **位运算** 技巧。核心逻辑在于 `i & (i - 1)` 这一操作，它能**消除数字 $i$ 二进制表示中最右侧的一个 1**（即最低有效位）。
+
+因此，数字 $i$ 包含的 1 的个数，必然等于“消除掉这一个 1 后的那个数”（即 `i & (i-1)`，该数一定小于 $i$ 且已计算过）包含的 1 的个数 **加 1**。通过这种方式，可以在 $O(N)$ 时间内一次性递推算出所有数的比特位计数。
 
 ## [347. 前 K 个高频元素](https://leetcode.cn/problems/top-k-frequent-elements/)
 
@@ -1834,7 +1853,13 @@ vector<int> topKFrequent(vector<int>& nums, int k) {
     }
 ```
 
-思路
+采用 **哈希表** 结合 **桶排序** (Bucket Sort) 的策略，实现了 $O(N)$ 的最优时间复杂度。
+
+核心逻辑分为三步：
+
+1. **频率统计**：利用哈希表统计每个元素出现的次数。
+2. **入桶**：将“频率”作为数组的**下标**，构建桶数组 `buckets[frequency]`，将出现次数相同的数字归入同一个桶中。
+3. **倒序收集**：从**最高频率**（桶数组末尾）开始向前遍历，依次收集桶中的元素，直到收集满 $k$ 个为止。这避免了使用堆（Heap）所需的 $\log$ 级排序开销。
 
 ## [394. 字符串解码](https://leetcode.cn/problems/decode-string/)
 
@@ -1897,7 +1922,11 @@ public:
 };
 ```
 
-思路
+利用 **贪心算法** (Greedy) 策略。核心思想是 **“高个子先站队，矮个子插队”**。
+
+首先根据身高 $h$ 进行 **降序排序**（若身高相同，则按 $k$ 升序）。这样做的妙处在于：当我们处理某个具体的人时，已经排在队列中的人**全部都比他高（或相等）**。
+
+因此，只需要按照他的 $k$ 值作为**索引**，将其插入到队列的对应位置即可。后续插入的“矮个子”即使站到了他前面，也不会影响他对“前面有多少个高个子”的计数（因为矮个子对高个子的 $k$ 值没有贡献），从而保证了队列属性的正确性。
 
 ## [416. 分割等和子集](https://leetcode.cn/problems/partition-equal-subset-sum/)
 
@@ -1920,7 +1949,9 @@ bool canPartition(vector<int>& nums) {
     }
 ```
 
-思路
+利用 **0/1 背包问题** 的动态规划思想。首先计算数组总和，若为奇数直接返回 `false`（无法均分），否则将目标设定为总和的一半 (`sum / 2`)。
+
+使用一维数组 `dp` 进行空间优化，定义 `dp[j]` 为是否能凑出和为 `j` 的子集。核心逻辑在于**外层遍历物品，内层倒序遍历容量**：通过从大到小遍历 `j`，保证在计算 `dp[j]` 时引用的 `dp[j - nums[i]]` 是**上一轮**（即未加入当前数字前）的状态，从而避免同一个数字被重复使用。
 
 ## [437. 路径总和 III](https://leetcode.cn/problems/path-sum-iii/)
 
@@ -1977,7 +2008,13 @@ vector<int> findAnagrams(string s, string p) {
     }
 ```
 
-思路
+利用 **滑动窗口** (Sliding Window) 结合 **双指针** 和 **哈希表** 技巧。
+
+核心逻辑是维护一个**固定长度**为 `p.size()` 的窗口在字符串 `s` 上滑动：
+
+1. **右移扩大** (`right`)：不断加入新字符并更新窗口内的计数器 `window` 和匹配状态 `valid`。
+2. **左移收缩** (`left`)：一旦窗口大小达到 `p` 的长度，便尝试收缩。在收缩前，检查当前窗口是否完全匹配（即 `valid` 数量达标），若是则记录起始索引。
+3. **状态维护**：通过 `valid` 变量记录“已满足频次要求的字符种类数”，避免了每次比较两个哈希表的 $O(26)$ 开销，将复杂度优化至 $O(N)$。
 
 ## [448. 找到所有数组中消失的数字](https://leetcode.cn/problems/find-all-numbers-disappeared-in-an-array/)
 
@@ -1998,7 +2035,12 @@ vector<int> findDisappearedNumbers(vector<int>& nums) {
     }
 ```
 
-思路
+利用 **原地哈希** (In-place Hashing) 策略，巧妙地将输入数组本身作为哈希表使用，从而实现 $O(1)$ 的额外空间复杂度。
+
+核心逻辑在于利用数字范围 $[1, N]$ 与数组下标 $[0, N-1]$ 的映射关系：
+
+1. **标记**：遍历数组，对于每个出现的数值 `num`，将其对应的下标 `(num - 1) % n` 处的元素**加上 n**。这样，凡是数值大于 $n$ 的位置，就代表该位置对应的数字（即 `下标 + 1`）**已经出现过**。
+2. **筛选**：再次遍历数组，若某一下标 `i` 处的元素值仍然小于等于 $n$，说明该位置从未被哈希函数“访问”过，即数字 `i+1` **缺失**。
 
 ## [461. 汉明距离](https://leetcode.cn/problems/hamming-distance/)
 
@@ -2017,7 +2059,7 @@ int hammingDistance(int x, int y) {
     }
 ```
 
-思路
+利用 **异或\*\***运算** (XOR) 和 **位操作**。首先计算 $x \oplus y$，该操作会将两个数字二进制表示中**不同**的位标记为 `1`，相同的位标记为 `0`。随后，通过循环不断检查运算结果的**最低有效位** (`s & 1`) 是否为 1 并累加计数，同时将数字**右移\*\* (`s >>= 1`)，从而统计出所有不同位的数量。
 
 ## [494. 目标和](https://leetcode.cn/problems/target-sum/)
 
@@ -2046,7 +2088,15 @@ int findTargetSumWays(vector<int>& nums, int target) {
     }
 ```
 
-思路
+利用 **0/1 背包问题**（子集和问题）的动态规划思想。
+
+首先通过数学推导将问题转化为**在数组中选取若干元素，使其和为** **`bagSize`** **的方法数有多少？**
+
+核心逻辑：
+
+1. **边界检查**：若 `sum + target` 为奇数，或 `target` 绝对值超过总和，则无法凑成，直接返回 0。
+2. **空间优化 DP**：使用一维数组 `dp[j]` 表示填满容量为 $j$ 的背包的方法数。
+3. **逆序遍历**：内层循环从 `bagSize` 倒序遍历到 `nums[i]`，确保每个物品在每轮计算中只被使用一次（典型的 0/1 背包处理方式）。
 
 ## [538. 把二叉搜索树转换为累加树](https://leetcode.cn/problems/convert-bst-to-greater-tree/)
 
@@ -2073,7 +2123,9 @@ public:
 };
 ```
 
-思路
+利用 **二叉搜索树** **(\*\***BST\***\*)** 的有序性，采用 **反向\*\***中序遍历**（$Right \to Root \to Left$）。由于 BST 的右子节点大于根节点，这种遍历方式保证了节点严格按照 **从大到小\*\* 的顺序被访问。
+
+核心逻辑是维护一个全局的累加变量 `sum`：在遍历过程中，将当前节点的值累加到 `sum` 中，随后用新的 `sum` 更新当前节点的值。本质上，这是在计算树中节点值的 **后缀和**，从而将 BST 转换为累加树。
 
 ## [543. 二叉树的直径](https://leetcode.cn/problems/diameter-of-binary-tree/)
 
@@ -2101,7 +2153,9 @@ public:
 };
 ```
 
-思路
+利用 **深度优先搜索** (DFS) 结合 **后序遍历** 的思想。核心在于将“求直径”的问题转化为求“深度”的子问题。
+
+在递归计算每个节点 **最大深度** 的过程中，顺带计算以该节点为 **转折点**（即路径最高点）的最长路径长度（即 `左子树深度 + 右子树深度`），并实时更新全局最大值 `maxVal`。函数最终返回自身的深度（`max(左, 右) + 1`）供父节点使用。
 
 ## [560. 和为 K 的子数组](https://leetcode.cn/problems/subarray-sum-equals-k/)
 
@@ -2123,7 +2177,17 @@ int subarraySum(vector<int>& nums, int k) {
     }
 ```
 
-思路
+利用 **前缀和** (Prefix Sum) 结合 **哈希表** 优化。核心思想是将“寻找和为 $k$ 的连续子数组”转化为“在当前位置之前，寻找前缀和等于 `pre - k` 的出现次数”。
+
+### 核心逻辑
+
+1. **前缀和转换**：定义 $pre[i]$ 为数组前 $i$ 个元素的和。那么子数组 $[j, i]$ 的和可以表示为 $pre[i] - pre[j-1]$。
+2. **等式变形**：我们要找的是满足 $pre[i] - pre[j-1] = k$ 的区间，等价于在遍历到 $i$ 时，寻找之前有多少个 $j$ 满足 $pre[j-1] = pre[i] - k$。
+3. **哈希表\*\***计数**：利用 `unordered_map` 存储每个前缀和出现的**频次\*\*。
+   1. **初始化** `mp[0] = 1`：这代表前缀和为 0 的情况出现过一次（用于处理从数组第一个元素开始就满足和为 $k$ 的情况）。
+   2. **实时累加**：在一次遍历中，计算当前前缀和 `pre`，在哈希表中查找 `pre - k`，将其出现的次数累加进结果 `cnt`，然后更新哈希表中 `pre` 的频次。
+
+这种方法将原本 $O(N^2)$ 的暴力枚举优化到了 **$O(N)$** 的时间复杂度。
 
 ## [581. 最短无序连续子数组](https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/)
 
