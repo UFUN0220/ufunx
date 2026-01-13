@@ -1,8 +1,8 @@
 ---
 title: 'WaiMai debug 2025'
 date: '2025-07-23'
-lastmod: '2026-01-01'
-tags: ['debug','java']
+lastmod: '2026-01-04'
+tags: ['debug', 'java']
 summary: ''
 images: []
 authors: ['default']
@@ -50,35 +50,35 @@ String[] split = message.split(" ");
 
 **IDEA 快捷键：**
 
-* 选中一行：`Shift + Alt + 方向键`
-* 选中一块：`Shift + Ctrl + 方向键`
+- 选中一行：`Shift + Alt + 方向键`
+- 选中一块：`Shift + Ctrl + 方向键`
 
 ### day3-3
 
 公共字段自动填充
 
-* `Signature.class` 中对接口 `Signature` 向下转型快捷键：`Ctrl + Alt + B`
-* 查看子接口：`Ctrl + H`
-* 若爆红，则导包。
-* 删除选中的一行：`Ctrl + Y`
+- `Signature.class` 中对接口 `Signature` 向下转型快捷键：`Ctrl + Alt + B`
+- 查看子接口：`Ctrl + H`
+- 若爆红，则导包。
+- 删除选中的一行：`Ctrl + Y`
 
 **IDEA 块注释：**
 
-* **快捷键：** `Ctrl + Shift + /`
-* **说明：** 添加块注释；再次使用，去掉块注释。
-* **注意：** 如果已经写好代码块，使用块注释需要先选中要注释的块；去除注释的时候，不需要全部选中这块代码，只用光标在注释内容上按快捷键即可。
+- **快捷键：** `Ctrl + Shift + /`
+- **说明：** 添加块注释；再次使用，去掉块注释。
+- **注意：** 如果已经写好代码块，使用块注释需要先选中要注释的块；去除注释的时候，不需要全部选中这块代码，只用光标在注释内容上按快捷键即可。
 
 ### day3-5
 
 `category_id` 为逻辑外键。
 
-*逻辑外键是数据库里没有设置，只是我们编程使用的时候逻辑上把它当作外键。*
+_逻辑外键是数据库里没有设置，只是我们编程使用的时候逻辑上把它当作外键。_
 
 ### day3-6
 
 新增菜品业务用到阿里云 OSS，免费试用 3 月。
 
-* 参考资料：[Day11-04. 案例-文件上传-阿里云OSS-准备](https://www.bilibili.com/video/BV1m84y1w7Tb?spm_id_from=333.788.videopod.episodes&vd_source=876a200f005a9932dbcbfa1ce9fa6e5e&p=148)
+- 参考资料：[Day11-04. 案例-文件上传-阿里云OSS-准备](https://www.bilibili.com/video/BV1m84y1w7Tb?spm_id_from=333.788.videopod.episodes&vd_source=876a200f005a9932dbcbfa1ce9fa6e5e&p=148)
 
 ### day3-11
 
@@ -97,11 +97,13 @@ select d.* , c.name from dish d left outer join category c on d.category_id=c.id
 **易错点（SetmealController）：**
 
 1. **3.2.1 批量删除套餐**：少写了 `@RequestParam` 导致删除接口测不通。
+
 ```java
 delete(@RequestParam List<Long> ids){}
 ```
 
 2. **4.2.1 根据 id 查询套餐**：`GetMapping` 里少写大括号导致修改套餐时看不到回显。
+
 ```java
 @GetMapping("/{id}")
 ```
@@ -128,13 +130,13 @@ redis-server.exe redis.windows.conf
 
 微信开发者工具调试 `getUserProfile`，若点击第一个 button 后不弹“获取你的昵称，头像”框。
 
-* **解决**：右上角点“详情-本地设置”修改调试基础库为 **2.27.0** 版本及以下（我选择的 2.26.2）。
+- **解决**：右上角点“详情-本地设置”修改调试基础库为 **2.27.0** 版本及以下（我选择的 2.26.2）。
 
 ### day6-12
 
 小程序 IDE 优化空间不小。导入代码时，**勾选不使用云服务**。
 
-*选了微信云服务后进去会白屏或者其他 bug，重新导入就好了。*
+_选了微信云服务后进去会白屏或者其他 bug，重新导入就好了。_
 
 ### day6-13
 
@@ -165,8 +167,8 @@ redis-server.exe redis.windows.conf
 **XML 爆红问题：**
 发现 xml 里有些 `parameterType` 和 `resultType` 爆红。解决方案：忽略即可，不影响运行。
 
-* 参考：[IDEA mapper下面的xml 关于parameterType爆红的原因](https://blog.csdn.net/CSDN_RLZ/article/details/109202469)
-* 参考：[解决 mapper.xml 文件的 resultType 爆红问题](https://blog.csdn.net/qq_35132089/article/details/130236918)
+- 参考：[IDEA mapper下面的xml 关于parameterType爆红的原因](https://blog.csdn.net/CSDN_RLZ/article/details/109202469)
+- 参考：[解决 mapper.xml 文件的 resultType 爆红问题](https://blog.csdn.net/qq_35132089/article/details/130236918)
 
 ### day8 (跳过微信支付)
 
@@ -178,7 +180,7 @@ redis-server.exe redis.windows.conf
 修改 `pages/pay/index.js` 文件（约 245 行）：
 
 ```javascript
-uni.redirectTo({url: '/pages/success/index?orderId=' + _this.orderId });
+uni.redirectTo({ url: '/pages/success/index?orderId=' + _this.orderId })
 ```
 
 **2. 修改 `OrderServiceImpl` 下的 `payment` 方法**
@@ -203,8 +205,7 @@ public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) throws Exceptio
 }
 ```
 
-**3. 修改 `OrderController**`
-调用 `orderService.paySuccess` 方法，传入订单号，直接更新数据库订单状态。
+**3. 修改 `OrderController**`调用`orderService.paySuccess` 方法，传入订单号，直接更新数据库订单状态。
 
 ```java
 @PutMapping("/payment")
@@ -297,7 +298,7 @@ public void paySuccess(String outTradeNo) {
     map.put("type", 1);//消息类型，1表示来单提醒 2表示客户催单
     map.put("orderID", ordersDB.getId());//订单id
     map.put("content", "订单号：" + outTradeNo);
-    
+
     //通过websocket向客户端浏览器推送消息
     String json = JSON.toJSONString(map);
     webSocketServer.sendToAllClient(json);
@@ -306,9 +307,9 @@ public void paySuccess(String outTradeNo) {
 
 **测试注意：**
 
-* 若第一次确认支付后无语音播报，则重新登录前端页面（建议用 Edge 默认设置）。
-* 若语音播报一直响，则注释掉定时任务每五秒发送消息给客户端的代码。
-* 若 Message 为空，则小程序 IDE 重新编译。
+- 若第一次确认支付后无语音播报，则重新登录前端页面（建议用 Edge 默认设置）。
+- 若语音播报一直响，则注释掉定时任务每五秒发送消息给客户端的代码。
+- 若 Message 为空，则小程序 IDE 重新编译。
 
 ### day11
 

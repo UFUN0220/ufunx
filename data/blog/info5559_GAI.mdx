@@ -1,10 +1,35 @@
 ---
-title: '[WashU]INFO5559 Generative AI Sol.'
-date: '2025-09-02'
-lastmod: '2025-09-02'
-tags: ['shopify', 'shopify-unite', 'nodejs']
-draft: true
+title: 'INFO5559 Generative AI Sol.'
+date: '2026-01-13'
+lastmod: '2026-01-13'
+tags: ['']
 summary: ''
 images: []
 authors: ['default']
 ---
+
+会持续更新完本课程所有作业解析。
+
+# Assgn1
+
+Assgn1要求：https://github.com/jeffheaton/app_generative_ai/blob/main/assignments/assignment_yourname_t81_559_class1.ipynb
+
+熟悉提交函数与提交作业模式。
+
+我不习惯用colab，基本都用jupyter notebook完成。
+
+本次作业先运行Assignment Submit Function，随后运行如下代码。
+
+```Bash
+key = "..." //替换成自己的，密钥有问题给Jeff发邮件
+
+file = '.../assignment_FangYou_t81_559_class1.ipynb' //替换成自己的文件路径
+
+//主函数
+df = pd.DataFrame({'a' : [0, 0, 1, 1], 'b' : [0, 1, 0, 1], 'c' : [0, 1, 1, 0]})
+
+//调用提交函数
+submit(source_file=file, data=[df], key=key, course='t81-559', no=1)
+
+//每次提交作业时，建议先注释掉submit函数，本地测试结果符合预期后再提交。
+```
