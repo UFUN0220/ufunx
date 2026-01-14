@@ -15,6 +15,22 @@
   text-fill-color: transparent;
 }
 
+.fixsizeresponsive {
+  font: bold 1.25rem serif;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .fixsizeresponsive {
+    font-size: 1.6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .fixsizeresponsive {
+    font-size: 1.8rem;
+  }
+}
+
 .washu-red {
   background-color: #a51417;
 }
@@ -46,7 +62,13 @@
   font-size: 0.9rem;
 }
 .dark .text-tag {
-  color: #e5e7eb;      /* 暗色模式：浅灰 (Tailwind Gray-200) */
+  color: #e5e7eb; /* 暗色模式：浅灰 (Tailwind Gray-200) */
+}
+
+.text-taglight {
+  font-family: serif;
+  color: #e5e7eb;
+  font-size: 0.9rem;
 }
 
 .bentofontdark {
@@ -54,15 +76,11 @@
   color: #1f2937;
 }
 .dark .bentofontdark {
-  color: #E0E0E0; /* 浅灰 (反色) */
+  color: #e0e0e0; /* 浅灰 (反色) */
 }
 
 .bentofontlight {
-  font: bold 1.25rem serif;
-  color: #e0e0e0;
-}
-.dark .bentofontlight {
-  font: bold 1.25rem serif;
+  font: bold 1.8rem serif;
   color: #e0e0e0;
 }
 
@@ -82,14 +100,14 @@
 
 @media (min-width: 640px) and (max-width: 1023px) {
   .bentofontlight {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
   }
 }
 
 /* 大屏幕（lg）及以上尺寸的字体大小 */
 @media (min-width: 1024px) {
   .bentofontlight {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
 }
 

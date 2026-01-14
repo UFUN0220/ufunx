@@ -3,7 +3,7 @@ import '~/css/homefont.css'
 
 const MBTI = () => {
   return (
-    <div className="relative flex h-full flex-col justify-center gap-2 rounded-[1.25rem] border p-4 shadow dark:border-gray-600">
+    <div className="relative flex h-full flex-col justify-center gap-2 rounded-[1.25rem] border p-4 shadow hover:shadow-md dark:border-gray-600">
       <div className="text-serif text-right font-bold">
         <img
           alt="IMSB"

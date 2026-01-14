@@ -134,7 +134,7 @@ export function ListLayout({
 
       {/* 页面标题 */}
       <h1
-        className="text-black-800 mb-16 mt-24 text-center text-2xl md:text-3xl lg:text-8xl"
+        className="text-black-800 mb-16 mt-24 text-center text-4xl md:text-5xl lg:text-8xl"
         style={{
           fontFamily: chineseFont,
           // backgroundImage: 'linear-gradient(45deg, #d291bc, #f7c8d0, #ffdfd3)',

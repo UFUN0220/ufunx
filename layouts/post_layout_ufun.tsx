@@ -1,14 +1,9 @@
 import type { Author, Blog } from 'contentlayer/generated'
 import type { ReactNode } from 'react'
-import { BackToPosts } from '~/components/blog/back-to-posts'
-import { Banner } from '~/components/blog/banner'
 import { BlogMeta } from '~/components/blog/blog-meta'
-import { Comments } from '~/components/blog/comments'
 import { PostNav } from '~/components/blog/post-nav'
 import { PostTitle } from '~/components/blog/post-title'
-//import { Reactions } from '~/components/blog/reactions'
 import { ScrollButtons } from '~/components/blog/scroll-buttons'
-//import { SocialShare } from '~/components/blog/social-share'
 import { TagsList } from '~/components/blog/tags'
 import { TableOfContents } from '~/components/blog/toc'
 import { Container } from '~/components/ui/container'
@@ -36,11 +31,10 @@ export function PostLayout({ content, next, prev, children }: LayoutProps) {
       <ScrollButtons />
 
       <article className="mx-auto max-w-screen-xl px-4 pt-6">
-        {/* 保持标题区域的 max-w-3xl 宽度，用于视觉对齐 */}
         <div className="mx-auto max-w-3xl space-y-2">
           <TagsList tags={tags} />
           <PostTitle>{title}</PostTitle>
-          <div className="flex items-center justify-between gap-2 pb-2 lg:pt-2 font-serif">
+          <div className="flex items-center justify-between gap-2 pb-2 font-serif lg:pt-2">
             <BlogMeta
               date={date}
               lastmod={lastmod}
@@ -51,8 +45,6 @@ export function PostLayout({ content, next, prev, children }: LayoutProps) {
           </div>
         </div>
 
-        {/* <GradientDivider className="mx-auto mb-2 mt-1 max-w-3xl" /> */}
-
         {/* 增大内容区域与TOC的水平间距：将 gap-8 改为 gap-12 或更大 */}
         <div className="grid grid-cols-1 gap-24 pb-10 pt-8 lg:grid-cols-12 lg:pt-10">
           {/* 左侧占位列 - 保持对称 */}
@@ -60,20 +52,19 @@ export function PostLayout({ content, next, prev, children }: LayoutProps) {
 
           {/* 主要内容区域 - 调整为与标题区域相同宽度 */}
           <div className="lg:col-span-8 xl:col-span-8">
-            <div className="prose max-w-none lg:prose-lg dark:prose-invert font-serif">{children}</div>
+            <div className="prose max-w-none font-serif lg:prose-lg dark:prose-invert">
+              {children}
+            </div>
           </div>
 
           {/* TOC 区域 - 移到正文区域外部右侧 */}
           <div className="lg:col-span-3 xl:col-span-3">
-            <div className="scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 max-h-[calc(100vh-6rem)] overflow-y-auto lg:sticky lg:top-24 font-serif">
+            <div className="scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 max-h-[calc(100vh-6rem)] overflow-y-auto font-serif lg:sticky lg:top-24">
               <TableOfContents toc={toc} />
             </div>
           </div>
         </div>
 
-        {/* <GradientDivider className="mx-auto max-w-3xl" /> */}
-
-        {/* 底部导航保持居中 */}
         <div className="mx-auto max-w-3xl space-y-4">
           <PostNav next={next} nextLabel="Next post" prev={prev} prevLabel="Previous post" />
         </div>

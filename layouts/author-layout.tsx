@@ -1,11 +1,8 @@
 import type { Author } from 'contentlayer/generated'
 import type { ReactNode } from 'react'
-import { CareerTimeline } from '~/components/author/career'
 import { SocialAccounts } from '~/components/author/social-accounts'
 import { ProfileCard } from '~/components/cards/profile'
-import { Button } from '~/components/ui/button'
 import { Container } from '~/components/ui/container'
-import { Image } from '~/components/ui/image'
 import { PageHeader } from '~/components/ui/page-header'
 import { Twemoji } from '~/components/ui/twemoji'
 import { SITE_METADATA } from '~/data/site-metadata'
@@ -39,16 +36,6 @@ export function AuthorLayout({ children }: Props) {
                 <Twemoji emoji="clinking-beer-mugs" />.
               </p>
             </div>
-            {/* <div>
-              <div className="mb-[1em] mt-[2em] flex items-center justify-between [&>h2]:my-0">
-                <h2>My career</h2>
-                <Button as="a" href="/static/resume.pdf" target="_blank">
-                  <span>Resume</span>
-                  <Twemoji emoji="page-facing-up" />
-                </Button>
-              </div>
-              <CareerTimeline />
-            </div> */}
             <div>
               <h2>Tech stack</h2>
               <p>
@@ -110,11 +97,6 @@ export function AuthorLayout({ children }: Props) {
                   components, adding <code>/snippets</code>, <code>/books</code>,{' '}
                   <code>/movies</code> page, etc.
                 </li>
-                {/* <li>
-                  <Twemoji emoji="inbox-tray" /> Bumping up <code>mdx-bundler</code>,{' '}
-                  <code>rehype</code>/<code>remark</code> plugins and dependencies to the latest
-                  version
-                </li> */}
               </ul>
               <p>
                 See my{' '}
@@ -123,49 +105,7 @@ export function AuthorLayout({ children }: Props) {
                 </a>{' '}
                 for this blog.
               </p>
-              {/* <div>
-                <h3>Legacy versions</h3>
-                <p>I started this blog since 2019 and up until now it has 2 legacy versions:</p>
-                <ul>
-                  <li>
-                    <code>v1</code> built with <strong>NextJS v13</strong> using Page router:{' '}
-                    <a
-                      href="https://leohuynhdev-git-v1-leo-huynhs-projects.vercel.app/"
-                      target="_blank"
-                    >
-                      https://leohuynhdev-git-v1-leo-huynhs-projects.vercel.app/
-                    </a>
-                  </li>
-                  <li>
-                    <code>v0</code> built with <strong>Gatsby</strong>:{' '}
-                    <a href="https://leo-blog-legacy.vercel.app/" target="_blank">
-                      https://leo-blog-legacy.vercel.app/
-                    </a>
-                  </li>
-                </ul>
-              </div> */}
             </div>
-            {/* <div>
-              <h2>Assets</h2>
-              <p>
-                Most of the images in my blog are from{' '}
-                <a href="https://unsplash.com/" target="_blank">
-                  Unsplash
-                </a>
-                , gifs from{' '}
-                <a href="https://giphy.com/" target="_blank">
-                  GIPHY
-                </a>
-                , and illustrations are from{' '}
-                <a href="https://storyset.com/" target="_blank">
-                  Storyset
-                </a>
-                .
-              </p>
-              <p>
-                Thanks for the free resources <Twemoji emoji="folded-hands" />.
-              </p>
-            </div> */}
             <div>
               <h2>Contact</h2>
               <p>
@@ -175,51 +115,6 @@ export function AuthorLayout({ children }: Props) {
               </p>
               <SocialAccounts />
             </div>
-            {/* <div>
-              <h2>Support</h2>
-              <p>If you appreciate my work, consider supporting me:</p>
-              <div className="flex flex-col gap-4">
-                <a
-                  href={SITE_METADATA.support.buyMeACoffee}
-                  target="_blank"
-                  className="[&_.image-container]:mx-0"
-                >
-                  <Image
-                    src="/static/images/bmc-button.png"
-                    alt="Buy Me A Coffee"
-                    width={213.7}
-                    height={60}
-                    style={{ height: 60 }}
-                  />
-                </a>
-                <a
-                  href={SITE_METADATA.support.paypal}
-                  target="_blank"
-                  className="flex h-15 w-[214px] items-center rounded-lg bg-[#009cde]/70 p-1"
-                >
-                  <Image
-                    src="/static/images/paypal-logo.png"
-                    alt="Donate via PayPal"
-                    width={225.88}
-                    height={60}
-                    style={{ height: 30, width: 'auto' }}
-                  />
-                </a>
-                <a
-                  href={SITE_METADATA.support.kofi}
-                  target="_blank"
-                  className="[&_.image-container]:mx-0"
-                >
-                  <Image
-                    src="/static/images/kofi.png"
-                    alt="Support me on Ko-fi"
-                    width={297}
-                    height={60}
-                    style={{ height: 60, width: 'auto' }}
-                  />
-                </a>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>

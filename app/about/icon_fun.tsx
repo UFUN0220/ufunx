@@ -1,12 +1,22 @@
 'use client'
 import React from 'react'
 
+// --- 基础接口定义 ---
 interface IconProps {
   className?: string
   onClick?: () => void
 }
 
-// 邮件图标组件
+// 继承基础接口，增加外部 SVG 资源所需的 src 和 alt
+interface SvgIconProps extends IconProps {
+  src: string
+  alt: string
+  hoverColor?: string
+}
+
+// --- 内联 SVG 图标组件 (支持 Tailwind hover 变色) ---
+
+// 1. 邮件图标
 export const MailIcon: React.FC<IconProps> = ({ className = '', onClick }) => {
   return (
     <svg
@@ -27,7 +37,7 @@ export const MailIcon: React.FC<IconProps> = ({ className = '', onClick }) => {
   )
 }
 
-// GitHub 图标组件
+// 2. GitHub 图标
 export const GithubIcon: React.FC<IconProps> = ({ className = '', onClick }) => {
   return (
     <svg
@@ -46,7 +56,7 @@ export const GithubIcon: React.FC<IconProps> = ({ className = '', onClick }) => 
   )
 }
 
-// LinkedIn 图标组件
+// 3. LinkedIn 图标
 export const LinkedinBoxIcon: React.FC<IconProps> = ({ className = '', onClick }) => {
   return (
     <svg
@@ -56,74 +66,50 @@ export const LinkedinBoxIcon: React.FC<IconProps> = ({ className = '', onClick }
       xmlns="http://www.w3.org/2000/svg"
       onClick={onClick}
     >
-      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
     </svg>
   )
 }
 
-// Steam 图标组件
-interface SvgIconProps extends IconProps {
-  src: string
-  alt: string
-  hoverColor?: string
-}
+// --- 外部 SVG 图标组件 (使用 object 标签) ---
 
+// 4. Steam 图标
 export const SteamIcon: React.FC<SvgIconProps> = ({
   src,
   alt,
   className = '',
-  hoverColor = 'text-gray-800',
+  hoverColor = 'text-gray-800', // 注意：object 引入的 SVG 很难通过 text-color 变色，除非 SVG 内部支持
   onClick,
 }) => {
   return (
-    
+    <div className={`relative ${className}`} onClick={onClick}>
       <object
-        className={`h-6 w-6 text-gray-700 hover:${hoverColor} cursor-pointer transition-colors dark:text-gray-300 dark:hover:text-gray-100 ${className}`}
+        className={`h-6 w-6 cursor-pointer text-gray-700 transition-colors hover:${hoverColor} dark:text-gray-300 dark:hover:text-gray-100`}
         type="image/svg+xml"
         data={src}
-        onClick={onClick}
+        style={{ pointerEvents: 'none' }} // 关键：让鼠标事件穿透 object，触发 div 的 onClick
       >
         <img className="h-6 w-6" src={src} alt={alt} />
       </object>
-    
+    </div>
   )
 }
 
-// 微信图标组件
-export const WechatIcon: React.FC<SvgIconProps> = ({
-  src,
-  alt,
-  className = '',
-  hoverColor = 'text-green-500',
-  onClick,
-}) => {
-  return (
-    <object
-      className={`h-8 w-8 text-gray-700 hover:${hoverColor} cursor-pointer transition-colors dark:text-gray-300 dark:hover:${hoverColor} ${className}`}
-      type="image/svg+xml"
-      data={src}
-      onClick={onClick}
-    >
-      <img className="h-8 w-8" src={src} alt={alt} />
-    </object>
-  )
-}
-
-// Hearthstone 图标组件
+// 5. 炉石传说图标
 export const HearthstoneIcon: React.FC<SvgIconProps> = ({
   src,
-  alt,
+  alt = 'Hearthstone',
   className = '',
   hoverColor = 'text-yellow-600',
   onClick,
 }) => {
   return (
-    <div className="dark:bg-gray-400 rounded-md p-0.8">
+    <div className={`rounded-md p-[3px] dark:bg-gray-400 ${className}`} onClick={onClick}>
       <object
-        className={`h-7 w-7 text-gray-700 hover:${hoverColor} cursor-pointer transition-colors dark:text-gray-300 dark:hover:${hoverColor} ${className}`}
+        className={`h-7 w-7 cursor-pointer text-gray-700 transition-colors hover:${hoverColor} dark:text-gray-300 dark:hover:${hoverColor}`}
         type="image/svg+xml"
         data={src}
-        onClick={onClick}
+        style={{ pointerEvents: 'none' }} // 关键：让鼠标事件穿透
       >
         <img className="h-7 w-7" src={src} alt={alt} />
       </object>
@@ -131,95 +117,81 @@ export const HearthstoneIcon: React.FC<SvgIconProps> = ({
   )
 }
 
-// 图标集合组件（可选）
+// --- 图标组合容器组件 ---
 interface IconGroupProps {
   className?: string
   onIconClick?: (iconName: string) => void
 }
 
 export const IconGroup: React.FC<IconGroupProps> = ({ className = '', onIconClick }) => {
-  const hearthStone = '/static/images/hearthstone.svg'
-  const steam = '/static/images/steam.svg'
+  // 定义静态资源路径
+  const PATHS = {
+    hearthstone: '/static/images/hearthstone.svg',
+    steam: '/static/images/steam.svg',
+  }
+
+  // Tooltip 的通用样式 (避免重复代码)
+  const tooltipClass = `
+    pointer-events-auto select-all absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap 
+    rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 z-50
+    before:content-[''] before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:bg-transparent
+    dark:bg-gray-600
+  `
 
   return (
-  <div className={`flex justify-center gap-6 ${className}`}>
-    
-    {/* 1. Mail: 悬浮下方 + 可复制 + 点击全选 */}
-    <div className="relative group flex items-center justify-center">
-      <a href="mailto:ufun2026@gmail.com" aria-label="Email">
-        <MailIcon onClick={() => onIconClick?.('mail')} />
-      </a>
-      {/* Tooltip */}
-      <span className="pointer-events-auto select-all absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 z-50
-        before:content-[''] before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:bg-transparent
-        dark:bg-gray-600">
-        ufun2026@gmail.com
-      </span>
-    </div>
-
-    {/* 2. GitHub: 悬浮下方 */}
-    <div className="relative group flex items-center justify-center">
-      <a 
-        href="https://github.com/UFUN0220" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        aria-label="GitHub"
-      >
-        <GithubIcon onClick={() => onIconClick?.('github')} />
-      </a>
-      <span className="pointer-events-auto select-none absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 z-50
-        before:content-[''] before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:bg-transparent
-        dark:bg-gray-600">
-        GitHub
-      </span>
-    </div>
-
-    {/* 3. LinkedIn: 悬浮下方 */}
-    <div className="relative group flex items-center justify-center">
-      <a
-        href="https://www.linkedin.com/in/fangyou11/"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="LinkedIn"
-      >
-        <LinkedinBoxIcon onClick={() => onIconClick?.('linkedin')} />
-      </a>
-      <span className="pointer-events-auto select-none absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 z-50
-        before:content-[''] before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:bg-transparent
-        dark:bg-gray-600">
-        LinkedIn
-      </span>
-    </div>
-
-    {/* 4. Hearthstone: 悬浮下方 + 可复制战网ID */}
-    <div className="relative group flex items-center justify-center">
-      <div>
-        <HearthstoneIcon
-          src={hearthStone}
-          alt="Hearthstone图标"
-          onClick={() => onIconClick?.('hearthstone')}
-        />
+    <div className={`flex justify-center gap-6 ${className}`}>
+      {/* 1. Mail */}
+      <div className="group relative flex items-center justify-center">
+        <a href="mailto:ufun2026@gmail.com" aria-label="Email">
+          <MailIcon onClick={() => onIconClick?.('mail')} />
+        </a>
+        <span className={tooltipClass}>ufun2026@gmail.com</span>
       </div>
-      <span className="pointer-events-auto select-all absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 z-50
-        before:content-[''] before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:bg-transparent
-        dark:bg-gray-600">
-        战网ID：文艺青年#51444
-      </span>
-    </div>
 
-    {/* 5. Steam: 悬浮下方 + 可复制好友代码 */}
-    <div className="relative group flex items-center justify-center">
-      <div>
-        <SteamIcon src={steam} alt="Steam图标" onClick={() => onIconClick?.('steam')} />
+      {/* 2. GitHub */}
+      <div className="group relative flex items-center justify-center">
+        <a
+          href="https://github.com/UFUN0220"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+        >
+          <GithubIcon onClick={() => onIconClick?.('github')} />
+        </a>
+        <span className={tooltipClass}>GitHub</span>
       </div>
-      <span className="pointer-events-auto select-all absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 z-50
-        before:content-[''] before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:bg-transparent
-        dark:bg-gray-600">
-        好友代码：1168891614
-      </span>
+
+      {/* 3. LinkedIn */}
+      <div className="group relative flex items-center justify-center">
+        <a
+          href="https://www.linkedin.com/in/fangyou11/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+        >
+          <LinkedinBoxIcon onClick={() => onIconClick?.('linkedin')} />
+        </a>
+        <span className={tooltipClass}>LinkedIn</span>
+      </div>
+
+      {/* 4. Hearthstone */}
+      <div className="group relative flex items-center justify-center">
+        {/* 这里使用 div 包裹并处理点击，或者直接传给组件 */}
+        <div onClick={() => onIconClick?.('hearthstone')}>
+          <HearthstoneIcon src={PATHS.hearthstone} alt="Hearthstone图标" />
+        </div>
+        <span className={tooltipClass}>战网ID：文艺青年#51444</span>
+      </div>
+
+      {/* 5. Steam */}
+      <div className="group relative flex items-center justify-center">
+        <div onClick={() => onIconClick?.('steam')}>
+          <SteamIcon src={PATHS.steam} alt="Steam图标" />
+        </div>
+        <span className={tooltipClass}>好友代码：1168891614</span>
+      </div>
     </div>
-  </div>
-)
+  )
 }
 
 export default IconGroup

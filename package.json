@@ -24,6 +24,7 @@
     "@headlessui/react": "2.2.0",
     "@next/bundle-analyzer": "15.1.2",
     "@octokit/graphql": "^8.1.1",
+    "@supabase/supabase-js": "^2.90.1",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.12",
     "@types/better-sqlite3": "^7.6.13",
@@ -98,5 +99,11 @@
     "*.+(js|jsx|ts|tsx|json|css|md|mdx)": [
       "prettier --write"
     ]
+  },
+  "overrides": {
+    "kbar": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
   }
 }

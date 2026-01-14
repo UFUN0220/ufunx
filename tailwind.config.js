@@ -16,11 +16,18 @@ module.exports = {
   theme: {
     extend: {
       keyframes: {
+        // ✨ 新版 Wiggle: 铃铛左右快速摇晃 (-3度 到 3度)
         wiggle: {
-          '0%': { transform: 'rotate(0deg)' },
-          '50%': { transform: 'rotate(180deg)' },
-          '100%': { transform: 'rotate(360deg)' },
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
         },
+        // 点击时的弹性缩放效果 (保留)
+        'scale-up': {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.18)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        // 音乐律动条 (保留，做 Spotify 组件时有用)
         'music-bar-1': {
           '0%, 100%': { height: '0%' },
           '50%': { height: '70%' },
@@ -40,20 +47,19 @@ module.exports = {
           '35.7%': { height: '0%' },
           '85.7%': { height: '70%' },
         },
-        'scale-up': {
-          '0%': { transform: 'scale(1)' },
-          '50%': { transform: 'scale(1.18)' },
-          '100%': { transform: 'scale(1)' },
-        },
       },
       animation: {
-        wiggle: 'wiggle 7s linear infinite',
+        // ✨ 新版动画配置: 0.3s 快速循环，实现"震动"感
+        wiggle: 'wiggle 0.3s ease-in-out infinite',
+
+        // 其他保留
+        'scale-up': 'scale-up 150ms ease-in-out forwards',
         'music-bar-1': 'music-bar-1 .8s linear infinite',
         'music-bar-2': 'music-bar-2 .8s linear infinite',
         'music-bar-3': 'music-bar-3 .8s linear infinite',
         'music-bar-4': 'music-bar-4 .8s linear infinite',
-        'scale-up': 'scale-up 150ms ease-in-out forwards',
       },
+
       boxShadow: {
         demure: 'rgba(0, 0, 0, 0.3) 0 35px 60px -15px',
         'book-pages': `10px 40px 40px -10px #00000030, inset -2px 0 0 gray,
