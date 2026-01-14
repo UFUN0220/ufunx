@@ -73,46 +73,44 @@ export const LinkedinBoxIcon: React.FC<IconProps> = ({ className = '', onClick }
 
 // --- 外部 SVG 图标组件 (使用 object 标签) ---
 
-// 4. Steam 图标
+// 4. Steam 图标 (本地文件版)
 export const SteamIcon: React.FC<SvgIconProps> = ({
   src,
   alt,
   className = '',
-  hoverColor = 'text-gray-800', // 注意：object 引入的 SVG 很难通过 text-color 变色，除非 SVG 内部支持
+  // hoverColor, // ❌ 注意：使用 img 引入本地文件时，外部无法修改颜色，此属性失效
   onClick,
 }) => {
   return (
-    <div className={`relative ${className}`} onClick={onClick}>
-      <object
-        className={`h-6 w-6 cursor-pointer text-gray-700 transition-colors hover:${hoverColor} dark:text-gray-300 dark:hover:text-gray-100`}
-        type="image/svg+xml"
-        data={src}
-        style={{ pointerEvents: 'none' }} // 关键：让鼠标事件穿透 object，触发 div 的 onClick
-      >
-        <img className="h-6 w-6" src={src} alt={alt} />
-      </object>
+    <div
+      className={`relative flex items-center justify-center rounded-md p-[1px] transition-colors hover:bg-gray-100 dark:bg-gray-400 dark:hover:bg-gray-300 ${className}`}
+      onClick={onClick}
+    >
+      {/* ✅ 改用 img 标签：兼容性最好，Chrome 也没问题 */}
+      <img
+        src={src}
+        alt={alt}
+        className="h-6 w-6" // 这里的宽高控制图标大小
+        draggable={false} // 防止拖拽图片
+      />
     </div>
   )
 }
 
-// 5. 炉石传说图标
+// 5. 炉石传说图标 (本地文件版)
 export const HearthstoneIcon: React.FC<SvgIconProps> = ({
   src,
   alt = 'Hearthstone',
   className = '',
-  hoverColor = 'text-yellow-600',
+  // hoverColor, // ❌ 同理，颜色属性失效，图片将显示原色
   onClick,
 }) => {
   return (
-    <div className={`rounded-md p-[3px] dark:bg-gray-400 ${className}`} onClick={onClick}>
-      <object
-        className={`h-7 w-7 cursor-pointer text-gray-700 transition-colors hover:${hoverColor} dark:text-gray-300 dark:hover:${hoverColor}`}
-        type="image/svg+xml"
-        data={src}
-        style={{ pointerEvents: 'none' }} // 关键：让鼠标事件穿透
-      >
-        <img className="h-7 w-7" src={src} alt={alt} />
-      </object>
+    <div
+      className={`flex items-center justify-center rounded-md p-[1px] transition-colors hover:bg-gray-100 dark:bg-gray-400 dark:hover:bg-gray-300 ${className}`}
+      onClick={onClick}
+    >
+      <img src={src} alt={alt} className="h-7 w-7" draggable={false} />
     </div>
   )
 }

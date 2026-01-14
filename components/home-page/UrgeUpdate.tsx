@@ -75,7 +75,7 @@ export function UrgeUpdate() {
         }
       case 2:
         return {
-          text: '可以了别点了૮꒰ ˶• ༝ •˶꒱ა', // 程序员梗
+          text: '好啦别点了૮꒰ ˶• ༝ •˶꒱ა',
           // 紫色：神秘/科技感
           colorClass: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
           icon: <Rocket className="h-8 w-8 group-hover:animate-pulse" />,
