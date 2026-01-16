@@ -10,7 +10,122 @@ authors: ['default']
 
 会持续更新完本课程所有作业解析。
 
-# Assgn1
+# genai_assgn_3
+
+Assgn3要求：https://github.com/jeffheaton/app_generative_ai/blob/main/assignments/assignment_yourname_t81_559_class3.ipynb
+
+使用大语言模型 (LLM) 对 25 条传记进行分类（从 5 种指定职业中选一），并从每句话中提取一个代表职业动作的**单字动词**。
+
+```Python
+import os
+import pandas as pd
+import time
+from langchain.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+
+os.environ["OPENAI_API_KEY"] = ""
+#这门课会提供一个gpt-4o-mini的key，也可以自己买
+df = pd.read_csv(".../jobs.csv")
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+#这里以你实际使用的模型为准
+
+def classify_batch(bios):
+    batch_prompt = """Classify each biography into one category: doctor, lawyer, teacher, software engineer, astronaut.
+
+    Return only the category names in order, one per line.
+
+    Biographies:
+    {}
+
+    Categories:""".format("\n".join([f"{i+1}. {bio}" for i, bio in enumerate(bios)]))
+
+    try:
+        response = llm.invoke([("human", batch_prompt)])
+        categories = response.content.strip().split('\n')
+        return [cat.strip().lower() for cat in categories]
+    except:
+        return ["unknown"] * len(bios)
+
+jobs = []
+batch_size = 5
+
+for i in range(0, len(df), batch_size):
+    batch = df["bio"].iloc[i:i+batch_size].tolist()
+
+    try:
+        batch_categories = classify_batch(batch)
+        jobs.extend(batch_categories)
+        print(f"Processed batch {i//batch_size + 1}: {batch_categories}")
+
+        time.sleep(30)
+
+    except Exception as e:
+        print(f"Batch failed: {e}")
+        jobs.extend(["unknown"] * len(batch))
+        time.sleep(60)
+
+df["job"] = jobs
+df_submit = df[["id", "job"]]
+
+key = ""
+file = '.../assignment_FangYou_t81_559_class3.ipynb'
+submit(source_file=file, data=[df_submit], course='t81-559', key=key, no=3)
+```
+
+# genai_assgn_2
+
+Assgn2要求：https://github.com/jeffheaton/app_generative_ai/blob/main/assignments/assignment_yourname_t81_559_class2.ipynb
+
+利用 `PIL` (Pillow) 绘图库来生成一张特定的图像。你需要根据参考图中的颜色、物体数量和位置关系，将这些视觉细节转化为精准的提示词（Prompt），并嵌入在 Python 代码的注释中，最后由代码逻辑生成最终的图像。
+
+```Python
+"""Prompt: Please write Python code using the Pillow (PIL) library to create a 640x480 pixel image
+that is evenly divided into 50 horizontal bars, each cycling in order through yellow, purple, and green.
+Draw a white circle with diameter 100 pixels exactly at the center of the image.
+Make sure purple and green bars are drawn behind the circle, while yellow bars are drawn in front of it.
+Do not save the image to a file; simply display it on the screen."""
+
+from PIL import Image, ImageDraw
+
+width, height = 640, 480
+num_bars = 50
+bar_height = height / num_bars
+colors = [(255, 255, 0), (128, 0, 128), (0, 128, 0)]
+
+img = Image.new("RGB", (width, height), (255, 255, 255))
+draw = ImageDraw.Draw(img)
+
+circle_diameter = 100
+circle_radius = circle_diameter // 2
+circle_center = (width // 2, height // 2)
+circle_bbox = [
+    circle_center[0] - circle_radius, circle_center[1] - circle_radius,
+    circle_center[0] + circle_radius, circle_center[1] + circle_radius
+]
+
+for i in range(num_bars):
+    color = colors[i % 3]
+    if color != (255, 255, 0):
+        y0, y1 = int(i * bar_height), int((i + 1) * bar_height)
+        draw.rectangle([0, y0, width, y1], fill=color)
+
+draw.ellipse(circle_bbox, fill=(255, 255, 255))
+
+for i in range(num_bars):
+    color = colors[i % 3]
+    if color == (255, 255, 0):
+        y0, y1 = int(i * bar_height), int((i + 1) * bar_height)
+        draw.rectangle([0, y0, width, y1], fill=color)
+
+img.show()
+
+key = ""
+file='.../assignment_FangYou_t81_559_class2.ipynb'
+submit(source_file=file,data=[image],key=key,no=2, course='t81-559')
+```
+
+# genai_assgn_1
 
 Assgn1要求：https://github.com/jeffheaton/app_generative_ai/blob/main/assignments/assignment_yourname_t81_559_class1.ipynb
 

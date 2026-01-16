@@ -2,7 +2,8 @@ import 'css/tailwind.css'
 import 'css/twemoji.css'
 import 'react-medium-image-zoom/dist/styles.css'
 import 'remark-github-blockquote-alert/alert.css'
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import clsx from 'clsx'
 import type { Metadata } from 'next'
@@ -143,9 +144,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           'dark:bg-dark dark:text-gray-100',
         ])}
       >
-        {/* <TiltedGridBackground className="inset-x-0 top-0 z-[-1] h-[50vh]" /> */}
-        {/* { <TestBackground className="inset-x-0 top-0 z-[-1] h-[50vh]" />  } */}
-
         <ThemeProviders>
           <UmamiAnalytics websiteId={SITE_METADATA.analytics.umamiAnalytics.websiteId} />
           <KBarSearchProvider configs={SITE_METADATA.search.kbarConfigs}>
@@ -155,6 +153,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
         </ThemeProviders>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
