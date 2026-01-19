@@ -198,7 +198,7 @@ public:
 };
 ```
 
-利用**回溯算法（\*\***DFS\***\*）构建一棵多叉树，树的每一层对应输入的一个数字，通过遍历该数字映射的所有字母分支，并在\*\***递归\***\*返回时撤销选择**（Pop Back），从而穷举所有可能的字符组合。
+利用**回溯算法（DFS）构建一棵多叉树，树的每一层对应输入的一个数字，通过遍历该数字映射的所有字母分支，并在递归返回时撤销选择**（Pop Back），从而穷举所有可能的字符组合。
 
 ## [19. 删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
 
@@ -310,6 +310,71 @@ public:
 
 利用**回溯算法**（DFS）逐位构建字符串，维护剩余左右括号的计数，并通过“剩余右括号数不能少于剩余左括号数”这一约束条件提前**剪枝**非法路径，从而生成所有有效的括号组合。
 
+## [23. 合并 K 个升序链表](https://leetcode.cn/problems/merge-k-sorted-lists/)
+
+> 给你一个链表数组，每个链表都已经按升序排列。
+>
+> 请你将所有链表合并到一个升序链表中，返回合并后的链表。
+
+```C++
+struct Cmp {
+    bool operator()(ListNode* a, ListNode* b) const {
+        return a->val > b->val;
+    }
+};
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        priority_queue<ListNode*, vector<ListNode*>, Cmp> pq;
+        for (ListNode* head : lists) {
+            if (head) pq.push(head);
+        }
+        ListNode dummy(0);
+        ListNode* tail = &dummy;
+        while (!pq.empty()) {
+            ListNode* cur = pq.top();
+            pq.pop();
+            tail->next = cur;
+            tail = tail->next;
+            if (cur->next) {
+                pq.push(cur->next);
+            }
+        }
+        return dummy.next;
+    }
+};
+```
+
+用一个小根堆维护 k 个链表的当前头结点，每次取出最小的节点接到结果链表中，再把该节点的 next 放回堆，时间复杂度是 O(N log k)。
+
+`Cmp` 是一个“比较器”，它告诉 priority_queue： **如果 a 的值比 b 大，那么 a 的优先级更低，应该排在后面**
+
+```C++
+struct Cmp {};  是一个**比较器类型**
+```
+
+bool operator()(ListNode* a, ListNode* b) 是 **函数调用运算符重载**。
+
+STL 容器可能以 const 方式持有比较器，因此 operator() 需要是 const。
+
+**priority_queue 的规则**：Compare(a, b) == true ⇒ a 的优先级低于 b
+
+```C++
+priority_queue<ListNode*, vector<ListNode*>, Cmp> pq;
+```
+
+定义一个小根堆 `pq`，堆中存的是 `ListNode*`，底层用 `vector` 存储，比较规则由 `Cmp` 决定。
+
+小根堆：
+
+a->val > b->val
+
+→ a 排后面
+
+→ val 小的排前面
+
+→ 堆顶是最小值
+
 ## [31. 下一个排列](https://leetcode.cn/problems/next-permutation/)
 
 > 整数数组的一个 **排列** 就是将其所有成员以序列或线性顺序排列。
@@ -406,10 +471,36 @@ int search(vector<int>& nums, int target) {
 > 你必须设计并实现时间复杂度为 `O(log n)` 的算法解决此问题。
 
 ```C++
-
+vector<int> searchRange(vector<int>& nums, int target) {
+        int left=0,right=nums.size()-1;
+        int first=-1,last=-1;
+        while(left<=right){
+            int mid=left+(right-left)/2;
+            if(nums[mid]==target){
+                first=mid;
+                right=mid-1; //找最左
+            }else if(nums[mid]<target){
+                left=mid+1;
+            }else right=mid-1;
+        }
+        if (first == -1) return {-1, -1}; //剪枝
+        left=first;
+        right=nums.size()-1;
+        while(left<=right){
+            int mid=left+(right-left)/2;
+            if(nums[mid]==target){
+                last=mid;
+                left=mid+1; //找最右
+            }else if(nums[mid]<target){
+                left=mid+1;
+            }else right=mid-1;
+        }
+        return {first,last};
+    }
+};
 ```
 
-思路
+执行两次二分查找：第一次找到目标时“不停并向左收缩”以锁定左边界，第二次找到目标时“不停并向右收缩”以锁定右边界。
 
 ## [39. 组合总和](https://leetcode.cn/problems/combination-sum/)
 
@@ -625,10 +716,34 @@ vector<vector<int>> merge(vector<vector<int>>& intervals) {
 > 问总共有多少条不同的路径？
 
 ```C++
-
+int uniquePaths(int m, int n) {
+        vector<int> dp(n,1);
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                dp[j]=dp[j]+dp[j-1];
+            }
+        }
+        return dp[n-1];
+    }
 ```
 
-思路
+数学：从左上角到右下角总共需要走 $$(m-1) + (n-1$$ 步，其中必须有 $$m-1$$ 步向下，$$n-1$$ 步向右。 所以结果就是从总步数中选出向下步数的方法数。
+
+**状态转移**：每个格子的值等于其**上方**和**左方**格子数值之和。
+
+**最终结果**：网格右下角的值即为所有可能的路径总数。
+
+优化：
+
+二维版：dp[i][j] = dp[i-1][j] + dp[i][j-1];
+
+一维版：dp[j] = dp[j] + dp[j-1];
+
+等号右边的 `dp[j]`：还没有被覆盖，它存的是**上一行**同位置的值。
+
+等号右边的 `dp[j-1]`：刚刚被覆盖过，它存的是**当前行**左侧的值。
+
+滚动数组就像是**原地更新**。我们不再为每一行开辟新空间，而是用新算出来的一行数据，把旧的那行数据“覆盖”掉。因为计算下一行时，旧行中更早之前的数据（比如 i-2 行）已经完全没用了。
 
 ## [64. 最小路径和](https://leetcode.cn/problems/minimum-path-sum/)
 
@@ -661,11 +776,20 @@ int minPathSum(vector<vector<int>>& grid) {
 >
 > 每次你可以爬 `1` 或 `2` 个台阶。你有多少种不同的方法可以爬到楼顶呢？
 
-```C++
-
+```Java
+int climbStairs(int n) {
+        if(n<=2) return n;
+        int prev1=1,prev2=2,res=0;
+        for(int i=3;i<=n;i++){
+            res=prev1+prev2;
+            prev1=prev2;
+            prev2=res;
+        }
+        return res;
+    }
 ```
 
-思路
+当前阶数的方案数等于前两阶方案数之和，通过不断更新两个变量（滚动数组思想）原地完成累加。
 
 ## [72. 编辑距离](https://leetcode.cn/problems/edit-distance/)
 
@@ -780,7 +904,7 @@ public:
 };
 ```
 
-以网格中每个位置为起点发起**深度优先搜索** **(\*\***DFS\***\*)**，递归地向四周邻居试探匹配字符，并通过临时修改当前格内容（如改为 `.`）来**标记已访问**以防止路径回头，最终在递归返回时**回溯**（还原字符）。
+以网格中每个位置为起点发起**深度优先搜索 (DFS)**，递归地向四周邻居试探匹配字符，并通过临时修改当前格内容（如改为 `.`）来**标记已访问**以防止路径回头，最终在递归返回时**回溯**（还原字符）。
 
 ## [84. 柱状图中最大的矩形](https://leetcode.cn/problems/largest-rectangle-in-histogram/)
 
@@ -938,7 +1062,7 @@ vector<vector<int>> levelOrder(TreeNode* root) {
     }
 ```
 
-利用**队列**实现**广度优先搜索 (\*\***BFS\***\*)**，在每轮迭代开始时记录当前队列长度以锁定**当前层级**的节点数量，从而批量处理该层所有节点并将下一层的子节点加入队列尾部。
+利用**队列**实现**广度优先搜索 (BFS)**，在每轮迭代开始时记录当前队列长度以锁定**当前层级**的节点数量，从而批量处理该层所有节点并将下一层的子节点加入队列尾部。
 
 ## [104. 二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree/)
 
@@ -1067,7 +1191,7 @@ int longestConsecutive(vector<int>& nums) {
     }
 ```
 
-利用 **哈希集合** **(\*\***HashSet\***\*)** 去重并实现 $O(1)$ 查找，遍历时仅对**没有前驱**（即 `n-1` 不存在）的数字发起连续序列长度统计，跳过非起点元素，从而确保每个数字仅被处理一次，实现 $O(N)$ 时间复杂度。
+利用 **哈希集合 (HashSet)** 去重并实现 $O(1)$ 查找，遍历时仅对**没有前驱**（即 `n-1` 不存在）的数字发起连续序列长度统计，跳过非起点元素，从而确保每个数字仅被处理一次，实现 $O(N)$ 时间复杂度。
 
 ## [136. 只出现一次的数字](https://leetcode.cn/problems/single-number/)
 
@@ -1076,10 +1200,20 @@ int longestConsecutive(vector<int>& nums) {
 > 你必须设计并实现线性时间复杂度的算法来解决此问题，且该算法只使用常量额外空间。
 
 ```C++
-
+int singleNumber(vector<int>& nums) {
+        int res=0;
+        for(int x:nums){
+            res^=x;
+        }
+        return res;
+    }
 ```
 
-思路
+异或运算（符号为 `^`）有三个非常神奇的性质：
+
+1. **归零律**：任何数和自己异或，结果为 0：$a \oplus a = 0$
+2. **恒等律**：任何数和 0 异或，结果仍为本身：$a \oplus 0 = a$
+3. **交换律/结合律**：$a \oplus b \oplus a = a \oplus a \oplus b = 0 \oplus b = b$
 
 ## [139. 单词拆分](https://leetcode.cn/problems/word-break/)
 
@@ -1115,13 +1249,25 @@ bool wordBreak(string s, vector<string>& wordDict) {
 >
 > 如果链表中有某个节点，可以通过连续跟踪 `next` 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 `pos` 来表示链表尾连接到链表中的位置（索引从 0 开始）。**注意：\*\***`pos`\*\* **不作为参数进行传递** 。仅仅是为了标识链表的实际情况。
 >
-> _如果**链表**中存在环_ ，则返回 `true` 。 否则，返回 `false` 。
+> _如果链表中存在环_ ，则返回 `true` 。 否则，返回 `false` 。
 
-```C++
-
+```Bash
+bool hasCycle(ListNode *head) {
+        if(!head||!head->next) return false;
+        ListNode* fast=head;
+        ListNode* slow=head;
+        while(fast&&fast->next){
+            fast=fast->next->next;
+            slow=slow->next;
+            if(fast==slow) return true;
+        }
+        return false;
+    }
 ```
 
-思路
+如果链表**有环，**快指针一定会在环中 **追上慢指针。**
+
+如果**无环，**快指针会先到 `nullptr`。
 
 ## [142. 环形链表 II](https://leetcode.cn/problems/linked-list-cycle-ii/)
 
@@ -1131,11 +1277,26 @@ bool wordBreak(string s, vector<string>& wordDict) {
 >
 > **不允许修改** 链表。
 
-```C++
-
+```Bash
+ListNode *detectCycle(ListNode *head) {
+        ListNode* fast=head;
+        ListNode* slow=head;
+        while(fast&&fast->next){
+            fast=fast->next->next;
+            slow=slow->next;
+            if(fast==slow){
+                while(head!=slow){
+                    head=head->next;
+                    slow=slow->next;
+                }
+                return head;
+            }
+        }
+        return nullptr;
+    }
 ```
 
-思路
+先用快慢指针在环内相遇，再将其中一个指针放回起点，两人以相同速度前进，再次相遇点即为环的入口。
 
 ## [146. LRU 缓存](https://leetcode.cn/problems/lru-cache/)
 
@@ -1152,37 +1313,49 @@ bool wordBreak(string s, vector<string>& wordDict) {
 ```C++
 class LRUCache {
     int cap;
-    list<int> l;
-    unordered_map<int,pair<int,list<int>::iterator>> mp;
+    list<int> l; // key 顺序：头旧，尾新
+    unordered_map<int, pair<int, list<int>::iterator>> mp;
+// cache: key -> (value, 指向链表中该 key 节点的迭代器)
+
 public:
-    LRUCache(int capacity):cap(capacity) {}
+    LRUCache(int capacity) : cap(capacity) {}
 
     int get(int key) {
-        if(!mp.count(key)) return -1;
-        touch(key);
+        if (!mp.count(key)) return -1;
+        touch(key);    // key 存在：把它标记为“最近使用”
         return mp[key].first;
     }
 
     void put(int key, int value) {
-        if(mp.count(key)){
-            l.erase(mp[key].second);
-        }else if(cap==l.size()){
-            mp.erase(l.front());
-            l.pop_front();
+        if (mp.count(key)) {
+            l.erase(mp[key].second);  // 如果 key 已存在，先把旧节点从链表中删除（准备放到尾部）
+        } else if (l.size() == cap) {
+            mp.erase(l.front());  // 从哈希表中移除对应项
+            l.pop_front();  // 从链表中移除头结点
         }
-        l.push_back(key);
-        mp[key]={value,prev(l.end())};
+        l.push_back(key);  // 在链表尾部插入（表示最近使用），并在哈希表中更新value与迭代器
+        mp[key] = {value, prev(l.end())};  //指向新插入的尾节点
     }
 
-    void touch(int key){
+    void touch(int key) {
         l.erase(mp[key].second);
         l.push_back(key);
-        mp[key].second=prev(l.end());
+        mp[key].second = prev(l.end());
     }
 };
 ```
 
 结合 **哈希表** (HashMap) 和 **双向链表** (Doubly Linked List)，利用哈希表存储 `key` 到 `{value, list_iterator}` 的映射以实现 $O(1)$ 的快速查找，同时利用链表维护**操作的时间顺序**。每次访问或更新数据时，将对应的 Key 移动到链表**尾部**（表示最近使用），而在容量不足时，直接移除链表**头部**（表示最近最少使用）的元素。
+
+`list<int> l` 只是存 key，不存 value；value 存在 `cache[key].first`。
+
+`unordered_map` 存的是 `{value, list<int>::iterator}`，这样可以 O(1) 找到 value，也能 O(1) 定位并删除链表节点。
+
+链表“头部”（`front()`）是最久未使用（LRU），“尾部”（`push_back` / `prev(l.end())`）是最近使用（MRU）。
+
+`prev(l.end())` 返回链表最后一个元素的迭代器（C++ 常用写法）。
+
+时间复杂度：`get` 与 `put` 都是 O(1)（平均情况），空间复杂度 O(capacity)。
 
 ## [148. 排序链表](https://leetcode.cn/problems/sort-list/)
 
@@ -1318,10 +1491,19 @@ ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
 > 你可以假设数组是非空的，并且给定的数组总是存在多数元素。
 
 ```C++
-
+int majorityElement(vector<int>& nums) {
+        int cand, cnt=0;
+        for(int x:nums){
+            if(cnt==0) cand=x;
+            cnt+=(cand==x)?1:-1;
+        }
+        return cand;
+    }
 ```
 
-思路
+Boyer–Moore 投票算法
+
+多数元素出现次数 **> n / 2，**不同元素可以 **两两抵消，**最后剩下的候选人，一定是多数元素。
 
 ## [198. 打家劫舍](https://leetcode.cn/problems/house-robber/)
 
@@ -1512,7 +1694,7 @@ public:
 };
 ```
 
-结合 **快慢指针** 和 **链表\*\***反转** 技巧，首先利用快慢指针定位链表的**中点**，随后将**后半部分\*\*链表进行原地反转，最后通过双指针同步比较前半段与反转后的后半段是否一致，从而在 $O(N)$ 时间且 $O(1)$ 空间内完成回文校验。
+结合 **快慢指针** 和 **链表反转** 技巧，首先利用快慢指针定位链表的**中点**，随后将**后半部分**链表进行原地反转，最后通过双指针同步比较前半段与反转后的后半段是否一致，从而在 $O(N)$ 时间且 $O(1)$ 空间内完成回文校验。
 
 ## [236. 二叉树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/)
 
@@ -1654,10 +1836,28 @@ void moveZeroes(vector<int>& nums) {
 > 你设计的解决方案必须 **不修改** 数组 `nums` 且只用常量级 `O(1)` 的额外空间。
 
 ```C++
-
+int findDuplicate(vector<int>& nums) {
+        int fast=0,slow=0;
+        do{
+            fast=nums[nums[fast]];
+            slow=nums[slow];
+        }while(fast!=slow);
+        slow=0;
+        while(fast!=slow){
+            fast=nums[fast];
+            slow=nums[slow];
+        }
+        return slow;
+    }
 ```
 
-思路
+将数组的值视为指向下一个下标的“指针”，由于存在重复数字，必然会形成一个带环的链表；通过快慢指针找到环的入口，该入口的值即为重复数。
+
+为什么数组可以看作链表？
+
+1. 数组长度为 n+1，数字范围在 [1, n]。
+2. 这意味着每个位置 `nums[i]` 都可以跳转到另一个合法的下标。
+3. 如果有重复数字（比如有两个 `2`），那么就会有两个不同的下标指向同一个位置 `2`，这在链表结构中正好形成了“环的入口”。
 
 ## [297. 二叉树的序列化与反序列化](https://leetcode.cn/problems/serialize-and-deserialize-binary-tree/)
 
@@ -1757,7 +1957,7 @@ int maxProfit(vector<int>& prices) {
 
 > 给你一个整数数组 `coins` ，表示不同面额的硬币；以及一个整数 `amount` ，表示总金额。
 >
-> 计算并返回可以凑成总金额所需的 **最少的\*\***硬币\***\*个数** 。如果没有任何一种硬币组合能组成总金额，返回 `-1` 。
+> 计算并返回可以凑成总金额所需的 **最少的硬币个数** 。如果没有任何一种硬币组合能组成总金额，返回 `-1` 。
 >
 > 你可以认为每种硬币的数量是无限的。
 
@@ -1774,7 +1974,7 @@ int coinChange(vector<int>& coins, int amount) {
     }
 ```
 
-利用**动态规划**（完全背包问题的变体），定义 `dp[j]` 为凑成金额 `j` 所需的**最少\*\***硬币\***\*数量**。通过外层遍历硬币类型、内层**正向遍历**金额（从小到大，意味着允许**重复使用**同一面额），在每次迭代中尝试加入当前硬币，并取“当前已知最优解”与“加入新硬币后的解”的**最小值**来更新状态。
+利用**动态规划**（完全背包问题的变体），定义 `dp[j]` 为凑成金额 `j` 所需的**最少硬币数量**。通过外层遍历硬币类型、内层**正向遍历**金额（从小到大，意味着允许**重复使用**同一面额），在每次迭代中尝试加入当前硬币，并取“当前已知最优解”与“加入新硬币后的解”的**最小值**来更新状态。
 
 ## [337. 打家劫舍 III](https://leetcode.cn/problems/house-robber-iii/)
 
@@ -1960,10 +2160,35 @@ bool canPartition(vector<int>& nums) {
 > **路径** 不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。
 
 ```C++
-
+class Solution {
+public:
+    int target=0,ans=0;
+    unordered_map<long long, int> prefix;
+    void dfs(TreeNode* node, long long curSum){
+        if(!node) return;
+        curSum+=node->val;
+        if(prefix.count(curSum-target)) ans+=prefix[curSum-target];
+        prefix[curSum]++;
+        dfs(node->left,curSum);
+        dfs(node->right,curSum);
+        prefix[curSum]--;
+    }
+    int pathSum(TreeNode* root, int targetSum) {
+        target=targetSum;
+        prefix[0]=1;
+        dfs(root,0);
+        return ans;
+    }
+};
 ```
 
-思路
+DFS 遍历二叉树，把从根到当前节点的路径和当作前缀和，用哈希表统计历史前缀和出现次数，当前前缀和减去 target 的次数就是以当前节点结尾的合法路径数。
+
+`prefix[0] = 1` 表示：在任何节点之前，存在一条“和为 0 的空路径”。
+
+在 DFS 开始之前，前缀和为 0 的路径，出现过 1 次。这个「路径」就是：空路径（什么节点都不选）
+
+要想**把任意路径和都表示成两个前缀和的差**，必须添加一个 0，否则当路径是前缀时（从根节点开始的路径），没法减去一个数。
 
 ## [438. 找到字符串中所有字母异位词](https://leetcode.cn/problems/find-all-anagrams-in-a-string/)
 
@@ -2059,7 +2284,7 @@ int hammingDistance(int x, int y) {
     }
 ```
 
-利用 **异或\*\***运算** (XOR) 和 **位操作**。首先计算 $x \oplus y$，该操作会将两个数字二进制表示中**不同**的位标记为 `1`，相同的位标记为 `0`。随后，通过循环不断检查运算结果的**最低有效位** (`s & 1`) 是否为 1 并累加计数，同时将数字**右移\*\* (`s >>= 1`)，从而统计出所有不同位的数量。
+利用 **异或运算** (XOR) 和 **位操作**。首先计算 $x \oplus y$，该操作会将两个数字二进制表示中**不同**的位标记为 `1`，相同的位标记为 `0`。随后，通过循环不断检查运算结果的**最低有效位** (`s & 1`) 是否为 1 并累加计数，同时将数字**右移** (`s >>= 1`)，从而统计出所有不同位的数量。
 
 ## [494. 目标和](https://leetcode.cn/problems/target-sum/)
 
@@ -2123,7 +2348,7 @@ public:
 };
 ```
 
-利用 **二叉搜索树** **(\*\***BST\***\*)** 的有序性，采用 **反向\*\***中序遍历**（$Right \to Root \to Left$）。由于 BST 的右子节点大于根节点，这种遍历方式保证了节点严格按照 **从大到小\*\* 的顺序被访问。
+利用 **二叉搜索树 (BST)** 的有序性，采用 **反向中序遍历**（$Right \to Root \to Left$）。由于 BST 的右子节点大于根节点，这种遍历方式保证了节点严格按照 **从大到小** 的顺序被访问。
 
 核心逻辑是维护一个全局的累加变量 `sum`：在遍历过程中，将当前节点的值累加到 `sum` 中，随后用新的 `sum` 更新当前节点的值。本质上，这是在计算树中节点值的 **后缀和**，从而将 BST 转换为累加树。
 
@@ -2179,11 +2404,11 @@ int subarraySum(vector<int>& nums, int k) {
 
 利用 **前缀和** (Prefix Sum) 结合 **哈希表** 优化。核心思想是将“寻找和为 $k$ 的连续子数组”转化为“在当前位置之前，寻找前缀和等于 `pre - k` 的出现次数”。
 
-### 核心逻辑
+#### 核心逻辑
 
 1. **前缀和转换**：定义 $pre[i]$ 为数组前 $i$ 个元素的和。那么子数组 $[j, i]$ 的和可以表示为 $pre[i] - pre[j-1]$。
 2. **等式变形**：我们要找的是满足 $pre[i] - pre[j-1] = k$ 的区间，等价于在遍历到 $i$ 时，寻找之前有多少个 $j$ 满足 $pre[j-1] = pre[i] - k$。
-3. **哈希表\*\***计数**：利用 `unordered_map` 存储每个前缀和出现的**频次\*\*。
+3. **哈希表计数**：利用 `unordered_map` 存储每个前缀和出现的**频次**。
    1. **初始化** `mp[0] = 1`：这代表前缀和为 0 的情况出现过一次（用于处理从数组第一个元素开始就满足和为 $k$ 的情况）。
    2. **实时累加**：在一次遍历中，计算当前前缀和 `pre`，在哈希表中查找 `pre - k`，将其出现的次数累加进结果 `cnt`，然后更新哈希表中 `pre` 的频次。
 
