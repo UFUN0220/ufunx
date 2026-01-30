@@ -1,7 +1,7 @@
 ---
 title: 'INFO5559 Generative AI Sol.'
 date: '2026-01-13'
-lastmod: '2026-01-13'
+lastmod: '2026-01-29'
 tags: ['']
 summary: ''
 images: []
@@ -9,6 +9,208 @@ authors: ['default']
 ---
 
 会持续更新完本课程所有作业解析。
+
+---
+
+# genai_assgn_5
+
+Assgn5要求：https://github.com/jeffheaton/app_generative_ai/blob/main/assignments/assignment_yourname_t81_559_class5.ipynb
+
+使用 LangChain 框架中的 `CommaSeparatedListOutputParser`（逗号分隔列表解析器）分步骤完成以下任务：
+
+1. **获取编程语言列表**：通过解析器获取 **10 种**编程语言。
+2. **获取语言特性**：针对每种编程语言，再次通过解析器分别找出的其 **10 个特性**。
+3. **生成结果表格**：将上述数据整理并展示为一个包含“语言”及“特性 1”至“特性 10”的结构化表格。
+
+```Python
+import os
+import pandas as pd
+from langchain.output_parsers import CommaSeparatedListOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from tqdm import tqdm
+
+llm = ChatOpenAI(
+    model_name="gpt-4o-mini",
+    temperature=0.7,
+    openai_api_key=os.getenv("OPENAI_API_KEY", "")
+)
+
+output_parser = CommaSeparatedListOutputParser()
+
+print("Step 1: Getting programming languages...")
+language_prompt = PromptTemplate(
+    template="List 10 popular programming languages.\n{format_instructions}",
+    input_variables=[],
+    partial_variables={"format_instructions": output_parser.get_format_instructions()}
+)
+
+language_chain = language_prompt | llm | output_parser
+languages = language_chain.invoke({})
+print(f"Found {len(languages)} programming languages: {', '.join(languages)}")
+
+print("\nStep 2: Getting features for each language...")
+features_data = {}
+
+for language in tqdm(languages, desc="Processing languages", unit="language"):
+    try:
+        feature_prompt = PromptTemplate(
+            template="List 10 key features of the {language} programming language.\n{format_instructions}",
+            input_variables=["language"],
+            partial_variables={"format_instructions": output_parser.get_format_instructions()}
+        )
+
+        feature_chain = feature_prompt | llm | output_parser
+        features = feature_chain.invoke({"language": language})
+        features_data[language] = features
+        print(f"  ✓ Completed: {language}")
+
+    except Exception as e:
+        print(f"  ✗ Error processing {language}: {str(e)}")
+        features_data[language] = ["Error"] * 10
+
+print("\nStep 3: Creating results table...")
+df = pd.DataFrame.from_dict(features_data, orient='index')
+df.columns = [f"Feature {i+1}" for i in range(len(df.columns))]
+df.index.name = "Language"
+
+print("\nFinal Results:")
+print(df)
+
+df_submit = df.reset_index()
+
+key = ""
+file = '.../assignment_FangYou_t81_559_class5.ipynb'
+submit(source_file=file, data=[df_submit], course='t81-559', key=key, no=5)
+```
+
+---
+
+# genai_assgn_4
+
+Assgn4要求：https://github.com/jeffheaton/app_generative_ai/blob/main/assignments/assignment_yourname_t81_559_class4.ipynb
+
+模拟两个具有**独立记忆**的聊天机器人（Chatbot）。程序需读取提供的对话文本，按角色分配输入，并记录它们的单句回复，最终生成一份包含机器人交互记录的输出文件。
+
+```Python
+import os
+import pandas as pd
+from langchain.memory import ConversationSummaryBufferMemory
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables import RunnableWithMessageHistory
+from langchain_core.chat_history import BaseChatMessageHistory
+from langchain_community.chat_message_histories import ChatMessageHistory
+from typing import Dict
+import uuid
+
+os.environ["OPENAI_API_KEY"] = ""
+key = ""
+file = '.../assignment_FangYou_t81_559_class4.ipynb'
+
+df = pd.read_csv(".../transcript4.csv")
+
+df['target'] = df['target'].str.strip()
+print("Target values after cleaning:", df['target'].unique())
+
+MODEL = 'gpt-4o-mini'
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant. Always answer in a single sentence."),
+    MessagesPlaceholder(variable_name="history"),
+    ("human", "{input}"),
+])
+
+llm = ChatOpenAI(model=MODEL, temperature=0.7)
+llm_summary = ChatOpenAI(model=MODEL, temperature=0.3)
+
+chat_histories: Dict[str, BaseChatMessageHistory] = {}
+
+def get_session_history(session_id: str) -> BaseChatMessageHistory:
+    """Get or create chat history for a session"""
+    if session_id not in chat_histories:
+        chat_histories[session_id] = ChatMessageHistory()
+    return chat_histories[session_id]
+
+def create_chatbot_memory(session_id):
+    """Create memory with summary capability for a chatbot"""
+    return ConversationSummaryBufferMemory(
+        llm=llm_summary,
+        max_token_limit=2000,
+        memory_key="history",
+        return_messages=True,
+        chat_memory=get_session_history(session_id)
+    )
+
+chain = prompt | llm
+
+chat1_chain = RunnableWithMessageHistory(
+    chain,
+    get_session_history,
+    input_messages_key="input",
+    history_messages_key="history",
+)
+
+chat2_chain = RunnableWithMessageHistory(
+    chain,
+    get_session_history,
+    input_messages_key="input",
+    history_messages_key="history",
+)
+
+responses = []
+
+for index, row in df.iterrows():
+    target = row['target']
+    prompt_text = row['prompt']
+
+    try:
+        if target == 'chat1':
+            response = chat1_chain.invoke(
+                {"input": prompt_text},
+                config={"configurable": {"session_id": "chat1"}}
+            )
+        elif target == 'chat2':
+            response = chat2_chain.invoke(
+                {"input": prompt_text},
+                config={"configurable": {"session_id": "chat2"}}
+            )
+        else:
+            print(f"警告: 未知的target值: '{row['target']}'")
+            response = f"Unknown target: {row['target']}"
+
+        response_content = response.content if hasattr(response, 'content') else str(response)
+        responses.append(response_content)
+
+    except Exception as e:
+        print(f"Error processing row {index}: {e}")
+        responses.append("Error generating response")
+
+df_submit = pd.DataFrame({
+    'target': df['target'],
+    'response': responses
+})
+
+print("Processed Transcript:")
+print(df_submit.to_string(index=False))
+
+print("\n--- Chat1 Memory Summary ---")
+chat1_memory = create_chatbot_memory("chat1")
+print(f"Chat1 messages: {len(get_session_history('chat1').messages)}")
+
+print("\n--- Chat2 Memory Summary ---")
+chat2_memory = create_chatbot_memory("chat2")
+print(f"Chat2 messages: {len(get_session_history('chat2').messages)}")
+
+if get_session_history('chat1').messages:
+    print(f"\nChat1 last message: {get_session_history('chat1').messages[-1]}")
+if get_session_history('chat2').messages:
+    print(f"Chat2 last message: {get_session_history('chat2').messages[-1]}")
+
+submit(source_file=file,data=[df_submit],course='t81-559',key=key,no=4)
+```
+
+---
 
 # genai_assgn_3
 
@@ -73,6 +275,8 @@ file = '.../assignment_FangYou_t81_559_class3.ipynb'
 submit(source_file=file, data=[df_submit], course='t81-559', key=key, no=3)
 ```
 
+---
+
 # genai_assgn_2
 
 Assgn2要求：https://github.com/jeffheaton/app_generative_ai/blob/main/assignments/assignment_yourname_t81_559_class2.ipynb
@@ -124,6 +328,8 @@ key = ""
 file='.../assignment_FangYou_t81_559_class2.ipynb'
 submit(source_file=file,data=[image],key=key,no=2, course='t81-559')
 ```
+
+---
 
 # genai_assgn_1
 
